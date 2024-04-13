@@ -25,14 +25,16 @@ LIBS = #-lm
 
 OBJ = sampler.o fpr.o rng.o shake.o
 
-all: example
+all: test_time sampler2file
 
 clean:
-	-rm -f $(OBJ) main.o example
+	-rm -f $(OBJ) test_time.o test_time
 
-example: main.o $(OBJ)
-	$(LD) $(LDFLAGS) -o example main.o $(OBJ) $(LIBS)
-	clear && ./example
+test_time: test_time.o $(OBJ)
+	$(LD) $(LDFLAGS) -o test_time test_time.o $(OBJ) $(LIBS)
+
+sampler2file: sampler2file.o $(OBJ)
+	$(LD) $(LDFLAGS) -o sampler2file sampler2file.o $(OBJ) $(LIBS)
 
 fpr.o: fpr.c sampler.h fpr.h
 	$(CC) $(CFLAGS) -c -o fpr.o fpr.c
@@ -46,6 +48,9 @@ shake.o: shake.c sampler.h fpr.h
 sampler.o: sampler.c sampler.h
 	$(CC) $(CFLAGS) -c -o sampler.o sampler.c
 
-main.o: main.c sampler.h
-	$(CC) $(CFLAGS) -c -o main.o main.c
+test_time.o: test_time.c sampler.h
+	$(CC) $(CFLAGS) -c -o test_time.o test_time.c
+
+sampler2file.o: sampler2file.c sampler.h
+	$(CC) $(CFLAGS) -c -o sampler2file.o sampler2file.c
 

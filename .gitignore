@@ -1,7 +1,10 @@
 /.vscode
-/example
+/test_time
+/sampler2file
 /fpr.o
 /main.o
 /rng.o
 /sampler.o
 /shake.o
+/sampler_1.txt
+/__pycache__

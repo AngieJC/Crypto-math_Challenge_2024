@@ -11,10 +11,10 @@
 int main() {
     sampler_shake256_context rng;
     sampler_context sc;
-    char *seed1 = "test sampler1";
-    char *seed2 = "test sampler2";
-    char *seed3 = "test sampler3";
-    char *seed4 = "test sampler4";
+    char *seed1 = "sampler_1";
+    char *seed2 = "sampler_2";
+    char *seed3 = "sampler_3";
+    char *seed4 = "sampler_4";
 
     printf("Test sampler: \n");
     fflush(stdout);
@@ -26,14 +26,11 @@ int main() {
     sampler_shake256_inject(&rng, (const uint8_t *)seed1, strlen(seed1));
     sampler_shake256_flip(&rng);
     Zf(prng_init)(&sc.p, &rng);
-    sc.sigma_min = fpr_sigma_min[9];
 
     int z;
     uint64_t samples = 100000000;
-    for(uint64_t i = 0; i < samples; ++i) {
+    for(uint64_t i = 0; i < samples; ++i)
         z = sampler_1(&sc);
-        // printf("%d, ", z);
-    }
     end = clock();
     duration = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time: %fs\n", duration);
