@@ -242,16 +242,6 @@ int sampler_1(void *ctx){
         bs >>= 1;
         cnt >>= 1;
         d = (d << 1) + b;
-        // if(d < m[4][col]) {
-        //     for(int row = 3; row >= 0; --row) {
-        //         d -= m[row][col];
-        //         if(d < 0) {
-        //             if(prng_get_u8(&spc->p) & 1)
-        //                 return row;
-        //             return -row;
-        //         }
-        //     }
-        // }
         d -= m[4][col];
         if(d < 0) {
             for(int row = 0; row < 4; ++row) {
