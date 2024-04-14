@@ -33,19 +33,19 @@ int main(int argc, char **argv) {
     {
     case 1:
         for(uint64_t i = 0; i < samples; ++i)
-            fprintf(f, "%d,", sampler_1(&sc));
+            fprintf(f, "%d, ", sampler_1(&sc));
         break;
     case 2:
         for(uint64_t i = 0; i < samples; ++i)
-            fprintf(f, "%d,", sampler_2(&sc));
+            fprintf(f, "%d, ", sampler_2(&sc));
         break;
     case 3:
         for(uint64_t i = 0; i < samples; ++i)
-            fprintf(f, "%d,", sampler_3(&sc, mu));
+            fprintf(f, "%d, ", sampler_3(&sc, mu));
         break;
     case 4:
         for(uint64_t i = 0; i < samples; ++i)
-            fprintf(f, "%d,", sampler_4(&sc, sigma, mu));
+            fprintf(f, "%d, ", sampler_4(&sc, sigma, mu));
         break;
     default:
         break;
