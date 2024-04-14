@@ -6,7 +6,9 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "sampler.h"
+#include "my_sampler.h"
 #include "time.h"
 #include "util.h"
 
@@ -20,7 +22,7 @@ int main(int argc, char **argv) {
     sampler_context sc;
     char seeds[4][16] = {"sampler_1", "sampler_2", "sampler_3", "sampler_4"};
 
-    printf("Test sampler: \n");
+    printf("Test sampler %d: \n", sampler);
     fflush(stdout);
 
     clock_t start, end;
@@ -56,6 +58,7 @@ int main(int argc, char **argv) {
     duration = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time: %fs\n", duration);
     printf("%.0f samples per seccond\n", samples / duration);
+    printf("Memory usage: %dKB\n", get_rmem(getpid()));
 
     return 0;
 }

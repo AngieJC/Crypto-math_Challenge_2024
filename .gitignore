@@ -3,4 +3,4 @@ __pycache__/
 test_time
 sampler2file
 *.o
-sampler_*.txt
+sampler_*_*.txt

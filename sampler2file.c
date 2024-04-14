@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sampler.h"
+#include "my_sampler.h"
 #include "time.h"
 #include "util.h"
 
@@ -13,10 +14,8 @@ int main(int argc, char **argv) {
     sampler_shake256_context rng;
     sampler_context sc;
     char seeds[4][16] = {"sampler_1", "sampler_2", "sampler_3", "sampler_4"};
-    char file_name[32] = {0};
-
-    printf("Write sampler to file\n");
-    fflush(stdout);
+    char file_name[1024] = {0};
+    char first_line[1024] = {0};
 
     clock_t start, end;
     double duration;
@@ -26,9 +25,12 @@ int main(int argc, char **argv) {
     sampler_shake256_flip(&rng);
     Zf(prng_init)(&sc.p, &rng);
 
-    sprintf(file_name, "sampler_%d_%lu.txt", sampler, samples);
+    sprintf(file_name, "./chi_test/sampler_%d_%lu.txt", sampler, samples);
+    printf("Write sampler to file: %s\n", file_name);
+    fflush(stdout);
     FILE *f = fopen(file_name, "w");
-    fprintf(f, "mu = 0, sigma = 0.75\n");
+    sprintf(first_line, "mu = %f, sigma = %f\n", mu, sigma);
+    fprintf(f, "%s", first_line);
     switch (sampler)
     {
     case 1:
