@@ -62,9 +62,9 @@ int sampler_1(void *ctx){
 int sampler_2(void *ctx){
     double sigma = 1024;
     double center = 0;
+
     int z = 0;
 
-    sampler_context *spc;
 
     return z;
 
