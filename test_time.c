@@ -5,16 +5,20 @@
  * @LastEditTime: 2024-04-13 11:39:57
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include "sampler.h"
 #include "time.h"
+#include "util.h"
 
-int main() {
+int main(int argc, char **argv) {
+    int sampler = 0;
+    double sigma = 1.0, mu = 0;
+    uint64_t samples = 0;
+    parse_arg(argc, argv, &sampler, &sigma, &mu, &samples);
+
     sampler_shake256_context rng;
     sampler_context sc;
-    char *seed1 = "sampler_1";
-    char *seed2 = "sampler_2";
-    char *seed3 = "sampler_3";
-    char *seed4 = "sampler_4";
+    char seeds[4][16] = {"sampler_1", "sampler_2", "sampler_3", "sampler_4"};
 
     printf("Test sampler: \n");
     fflush(stdout);
@@ -23,14 +27,31 @@ int main() {
     double duration;
     start = clock();
     sampler_shake256_init(&rng);
-    sampler_shake256_inject(&rng, (const uint8_t *)seed1, strlen(seed1));
+    sampler_shake256_inject(&rng, (const uint8_t *)seeds[sampler], strlen(seeds[sampler]));
     sampler_shake256_flip(&rng);
     Zf(prng_init)(&sc.p, &rng);
 
-    int z;
-    uint64_t samples = 100000000;
-    for(uint64_t i = 0; i < samples; ++i)
-        z = sampler_1(&sc);
+    switch (sampler)
+    {
+    case 1:
+        for(uint64_t i = 0; i < samples; ++i)
+            sampler_1(&sc);
+        break;
+    case 2:
+        for(uint64_t i = 0; i < samples; ++i)
+            sampler_2(&sc);
+        break;
+    case 3:
+        for(uint64_t i = 0; i < samples; ++i)
+            sampler_3(&sc, mu);
+        break;
+    case 4:
+        for(uint64_t i = 0; i < samples; ++i)
+            sampler_4(&sc, sigma, mu);
+        break;
+    default:
+        break;
+    }
     end = clock();
     duration = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time: %fs\n", duration);
