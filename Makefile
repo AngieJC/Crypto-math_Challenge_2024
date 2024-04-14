@@ -28,7 +28,7 @@ OBJ = sampler.o fpr.o rng.o shake.o util.o my_sampler.o
 all: test_time sampler2file
 
 clean:
-	-rm -f $(OBJ) test_time.o test_time
+	-rm -f $(OBJ) test_time.o test_time sampler2file.o sampler2file
 
 test_time: test_time.o $(OBJ)
 	$(LD) $(LDFLAGS) -o test_time test_time.o $(OBJ) $(LIBS)
