@@ -6,3 +6,4 @@ sampler2file
 sampler_*_*.txt
 *.out
 *.s
+gprof_figs/
