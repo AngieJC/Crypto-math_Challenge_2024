@@ -16,8 +16,7 @@
 #               (normally not needed on x86, both 32-bit and 64-bit)
 
 CC = gcc
-# CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 #-pg -fno-pie
-CFLAGS = -O3
+CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 #-pg -fno-pie
 LD = gcc
 LDFLAGS = #-pg -no-pie
 LIBS = #-lm

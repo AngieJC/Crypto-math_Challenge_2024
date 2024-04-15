@@ -4,3 +4,5 @@ test_time
 sampler2file
 *.o
 sampler_*_*.txt
+*.out
+*.s
