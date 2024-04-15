@@ -26,8 +26,10 @@ int main(int argc, char **argv) {
     fflush(stdout);
 
     clock_t start, end;
+    uint32_t tsc_start_lo, tsc_start_hi, tsc_end_lo, tsc_end_hi;
     double duration;
     start = clock();
+    __asm__ __volatile__("rdtsc" : "=a" (tsc_start_lo), "=d" (tsc_start_hi));
     sampler_shake256_init(&rng);
     sampler_shake256_inject(&rng, (const uint8_t *)seeds[sampler], strlen(seeds[sampler]));
     sampler_shake256_flip(&rng);
@@ -54,10 +56,16 @@ int main(int argc, char **argv) {
     default:
         break;
     }
+    __asm__ __volatile__("rdtsc" : "=a" (tsc_end_lo), "=d" (tsc_end_hi));
     end = clock();
     duration = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time: %fs\n", duration);
     printf("%.0f samples per seccond\n", samples / duration);
+    printf("%llu clocks per sample\n", 
+        (
+            ((int64_t)tsc_end_lo | ((int64_t)tsc_end_hi) << 32) - 
+            ((int64_t)tsc_start_lo | ((int64_t)tsc_start_hi) << 32)
+        ) / samples);
     printf("Memory usage: %dKB\n", get_rmem(getpid()));
 
     return 0;

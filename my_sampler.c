@@ -53,8 +53,10 @@ int sampler_1(void *ctx){
                         bs = prng_get_u8(&spc->p);
                         cnt = 0x40;
                     }
+                    else
+                        cnt >>= 1;
                     b = bs & 1;
-                    bs >> 1;
+                    bs >>= 1;
                     if(b)
                         return row;
                     return -row;
