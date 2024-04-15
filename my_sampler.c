@@ -23,7 +23,7 @@
 int sampler_1(void *ctx){
     sampler_context *spc;
     int32_t d = 0, b = 0;
-    static uint32_t bs = 0, cnt = 0;
+    static uint64_t bs = 0, cnt = 0;
     spc = (sampler_context *)ctx;
 
     const static uint8_t m1[6][64] = {
@@ -36,12 +36,13 @@ int sampler_1(void *ctx){
     };
     for(int col = 0; col < 64; ++col) {
         if(cnt == 0) {
-            bs = prng_get_u8(&spc->p);
-            cnt = 0x80;
+            bs = prng_get_u64(&spc->p);
+            cnt = 0x4000000000000000;
         }
+        else
+            cnt >>= 1;
         d = (d << 1) + (bs & 1);
         bs >>= 1;
-        cnt >>= 1;
         d -= m1[5][col];
         if(d < 0) {
             for(int row = 0; row < 5; ++row) {
@@ -50,16 +51,14 @@ int sampler_1(void *ctx){
                     if(row == 0)
                         return row;
                     if(cnt == 0) {
-                        bs = prng_get_u8(&spc->p);
-                        cnt = 0x40;
+                        bs = prng_get_u64(&spc->p);
+                        cnt = 0x4000000000000000;
                     }
                     else
                         cnt >>= 1;
                     b = bs & 1;
                     bs >>= 1;
-                    if(b)
-                        return row;
-                    return -row;
+                    return b ? row : -row;
                 }
             }
         }
