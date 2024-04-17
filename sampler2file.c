@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     {
     case 1:
         for(uint64_t i = 0; i < samples; ++i)
-            fprintf(f, "%d, ", sampler_1_SIMD(&sc));
+            fprintf(f, "%d, ", sampler_1(&sc));
         break;
     case 2:
         for(uint64_t i = 0; i < samples; ++i)
