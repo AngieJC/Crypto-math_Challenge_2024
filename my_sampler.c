@@ -21,7 +21,7 @@
 
 
 typedef uint8_t v512u8 __attribute__ ((vector_size (512 / 8)));
-typedef uint8_t v512i8 __attribute__ ((vector_size (512 / 8)));
+typedef int8_t v512i8 __attribute__ ((vector_size (512 / 8)));
 
 // Fixed sigma = 0.75 and center = 0
 int sampler_1(void *ctx){
@@ -70,6 +70,80 @@ int sampler_1(void *ctx){
         }
     }
     return 0;
+}
+
+static inline u64_to_v512ui(uint64_t x, v512u8 *v) {
+    for(int i = 0; i < 64; ++i) {
+        (*v)[i] = x & 1;
+        x >>= 1;
+    }
+}
+
+int sampler_1_SIMD(void *ctx){
+    sampler_context *spc;
+    spc = (sampler_context *)ctx;
+
+    const static uint8_t m1[5][64] = {
+        {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1},
+        {0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1},
+        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0}
+    };
+    const static uint8_t m1_col_sum[64] = {
+        1, 1, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 3, 4, 2, 2, 2, 1, 4, 1, 3, 3, 2, 5, 4, 1, 4, 2, 2, 1, 3, 3, 3, 3, 3, 4, 2, 2, 1, 4, 2, 2, 1, 4, 1, 4, 2, 1, 3, 2, 5, 2, 5, 3, 4, 2, 2, 2, 1, 3, 3, 3
+    };
+    static uint8_t sample_cnt = 0, b = 0;
+    static int8_t samples[64] = {0};
+    static uint64_t bs = 0, bs_cnt = 0;
+    uint8_t which_col;
+
+    if(sample_cnt == 0) {
+        sample_cnt = 63;
+        v512u8 vcom = {0}, vWhichCol = {0};
+        v512i8 vd = {0}, vb = {0};
+        v512u8 vflag = {1, 1, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 1, 1, 1, 1, 
+                        1, 1, 1, 1, 1, 1, 1, 1};
+        for(int col = 0; col < 64; ++col) {
+            u64_to_v512ui(prng_get_u64(&spc->p), &vb);
+            vd = vd + vflag * (vd + vb);
+            vcom = (vd >= m1_col_sum[col]) & 1;
+            vd -= vflag * m1_col_sum[col];
+            vflag &= vcom;
+            vWhichCol += vflag;
+        }
+        for(int i = 0; i < 64; ++i) {
+            which_col = vWhichCol[i];
+            for(int row = 0; row < 5; ++row) {
+                vd[i] += m1[row][which_col];
+                if(vd[i] == 0) {
+                    if(row == 0)
+                        samples[i] = 0;
+                    else {
+                        if(bs_cnt == 0) {
+                            bs = prng_get_u64(&spc->p);
+                            bs_cnt = 0x4000000000000000;
+                        }
+                        else
+                            bs_cnt >>= 1;
+                        b = bs & 1;
+                        bs >>= 1;
+                        samples[i] = b ? row : -row;
+                    }
+                    break;
+                }
+            }
+        }
+        return samples[0];
+    }
+    else
+        return samples[sample_cnt--];
 }
 
 // Fixed sigma = 1024 and center = 0

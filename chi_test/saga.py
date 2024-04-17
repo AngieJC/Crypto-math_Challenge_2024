@@ -195,7 +195,7 @@ class UnivariateSamples:
         exp = [round(prob * self.nsamples) for prob in exp]
         diff = self.nsamples - sum(exp_histogram.values())
         exp_histogram[int(round(self.exp_mu))] += diff
-        # 由于浮点数计算偏差，obs和exp的样本数量可能不一样，需要修正
+        # 由于浮点数计算偏差，obs 和 exp 的样本数量可能不一样，需要修正
         obs_sum = sum(obs)
         exp_sum = sum(exp)
         if exp_sum > obs_sum:
