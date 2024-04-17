@@ -23,6 +23,22 @@
 typedef uint8_t v512u8 __attribute__ ((vector_size (512 / 8)));
 typedef int8_t v512i8 __attribute__ ((vector_size (512 / 8)));
 
+static inline void save_rng(uint8_t *saved_rng, uint8_t *saved_cnt, uint8_t b8) {
+    if(*saved_cnt == 2)
+        *saved_rng = (b8 << 4);
+    else
+        *saved_rng ^= b8 & 0b00001111;
+    (*saved_cnt) <<= 1;
+}
+
+static inline uint8_t get_u8_saved_rng(uint8_t *saved_rng, uint8_t *saved_cnt, sampler_context *spc) {
+    if(*saved_cnt < 8)
+        return prng_get_u8(&spc->p);
+    else
+        *saved_cnt = 2;
+    return *saved_rng;
+}
+
 // Fixed sigma = 0.75 and center = 0
 int sampler_1(void *ctx){
     sampler_context *spc;
@@ -69,12 +85,15 @@ int sampler_1(void *ctx){
         5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 0, 0
     };
     static const uint8_t before_sum[8] = {0, 128, 192, 224, 224, 240, 248, 252};
-    uint8_t b8 = prng_get_u8(&spc->p);
+    static uint8_t saved_rng = 0, saved_cnt = 2;
+    uint8_t b8 = get_u8_saved_rng(&saved_rng, &saved_cnt, spc);
     if(b8 < 254) {
         uint8_t whichcol = col_index[b8];
         uint8_t d_max = b8 - before_sum[whichcol];
         d = (d_max >> (7 - whichcol)) - m1_col_sum[whichcol];
         d = m1_index[whichcol][-(d + 1)];
+        if(whichcol < 4)
+            save_rng(&saved_rng, &saved_cnt, b8);
         goto return_val;
     }
     d = b8 & 1;
