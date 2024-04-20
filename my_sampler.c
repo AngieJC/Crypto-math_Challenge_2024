@@ -82,16 +82,13 @@ int sampler_1(void *ctx){
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
         4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
-        5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 0, 0
+        5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8
     };
-    static const uint8_t before_sum[8] = {0, 128, 192, 224, 224, 240, 248, 252};
     static uint8_t saved_rng = 0, saved_cnt = 2;
     uint8_t b8 = get_u8_saved_rng(&saved_rng, &saved_cnt, spc);
     if(b8 < 254) {
         uint8_t whichcol = col_index[b8];
-        uint8_t d_max = b8 - before_sum[whichcol];
-        d = (d_max >> (7 - whichcol)) - m1_col_sum[whichcol];
-        d = m1_index[whichcol][-(d + 1)];
+        d = m1_index[whichcol][m1_col_sum[whichcol] - ((b8 >> (7 - whichcol)) & 1) - 1];
         if(whichcol < 4)
             save_rng(&saved_rng, &saved_cnt, b8);
         goto return_val;
