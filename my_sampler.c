@@ -23,28 +23,30 @@
 typedef uint8_t v512u8 __attribute__ ((vector_size (512 / 8)));
 typedef int8_t v512i8 __attribute__ ((vector_size (512 / 8)));
 
-static inline void save_rng(uint8_t *saved_rng, uint8_t *saved_cnt, uint8_t b8) {
-    if(*saved_cnt == 2)
+static inline void save_rng(uint8_t *restrict saved_rng, uint8_t *restrict saved_cnt, uint8_t b8) {
+    if(*saved_cnt == 0) {
         *saved_rng = (b8 << 4);
-    else
-        *saved_rng ^= b8 & 0b00001111;
-    (*saved_cnt) <<= 1;
+        *saved_cnt = 1;
+        return;
+    }
+    *saved_rng ^= b8 & 0b00001111;
+    *saved_cnt = 2;
 }
 
-static inline uint8_t get_u8_saved_rng(uint8_t *saved_rng, uint8_t *saved_cnt, sampler_context *spc) {
-    if(*saved_cnt < 8)
-        return prng_get_u8(&spc->p);
-    else
-        *saved_cnt = 2;
-    return *saved_rng;
+static inline uint8_t get_u8_saved_rng(uint8_t *restrict saved_rng, uint8_t *restrict saved_cnt, prng *rng) {
+    if(*saved_cnt == 2) {
+        *saved_cnt = 0;
+        return *saved_rng;
+    }
+    return prng_get_u8(rng);
 }
 
 // Fixed sigma = 0.75 and center = 0
 int sampler_1(void *ctx){
-    sampler_context *spc;
+    prng *restrict rng;
     int32_t d = 0, b = 0;
     static uint64_t bs = 0, cnt = 0;
-    spc = (sampler_context *)ctx;
+    rng = &((sampler_context *)ctx)->p;
 
     // const static uint8_t m1[5][64] = {
     //     {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1},
@@ -84,8 +86,8 @@ int sampler_1(void *ctx){
         4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
         5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8
     };
-    static uint8_t saved_rng = 0, saved_cnt = 2;
-    uint8_t b8 = get_u8_saved_rng(&saved_rng, &saved_cnt, spc);
+    static uint8_t saved_rng = 0, saved_cnt = 0;
+    uint8_t b8 = get_u8_saved_rng(&saved_rng, &saved_cnt, rng);
     if(b8 < 254) {
         uint8_t whichcol = col_index[b8];
         d = m1_index[whichcol][m1_col_sum[whichcol] - ((b8 >> (7 - whichcol)) & 1) - 1];
@@ -96,7 +98,7 @@ int sampler_1(void *ctx){
     d = b8 & 1;
     for(int col = 8; col < 64; ++col) {
         if(cnt == 0) {
-            bs = prng_get_u64(&spc->p);
+            bs = prng_get_u64(rng);
             cnt = 0x4000000000000000;
         }
         else
@@ -110,7 +112,7 @@ int sampler_1(void *ctx){
             if(d == 0)
                 return 0;
             if(cnt == 0) {
-                bs = prng_get_u64(&spc->p);
+                bs = prng_get_u64(rng);
                 cnt = 0x4000000000000000;
             }
             else
