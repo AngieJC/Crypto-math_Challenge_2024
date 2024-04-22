@@ -33,10 +33,7 @@ static inline void check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prn
 
 // Fixed sigma = 0.75 and center = 0
 int sampler_1(void *ctx){
-    prng *restrict rng;
-    int32_t d = 0, b = 0;
-    static uint64_t b64 = 0, cnt = 0;
-    rng = &((sampler_context *)ctx)->p;
+    prng *restrict rng = &((sampler_context *)ctx)->p;
 
     static const uint8_t m1_index[64][5] = {
         {0, 0, 0, 0, 0}, {1, 0, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, 
@@ -84,7 +81,9 @@ int sampler_1(void *ctx){
         4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
         5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8
     };
-    uint8_t b8 = prng_get_u8(rng);
+    int32_t d = 0;
+    static uint64_t b64 = 0, cnt = 0;
+    uint8_t b8 = prng_get_u8(rng), b;
     if(b8 < 254) {
         uint8_t whichcol = col_index[b8];
         d = m1_index[whichcol][m1_col_sum[whichcol] - ((b8 >> (7 - whichcol)) & 1) - 1];
