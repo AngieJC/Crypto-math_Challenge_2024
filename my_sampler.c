@@ -22,13 +22,16 @@
 typedef uint8_t v512u8 __attribute__ ((vector_size (512 / 8)));
 typedef int8_t v512i8 __attribute__ ((vector_size (512 / 8)));
 
-static inline void check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *restrict rng) {
+static inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
     else {
         *b64 = prng_get_u64(rng);
-        cnt = 0x4000000000000000;
+        *cnt = 0x4000000000000000;
     }
+    uint8_t b = (*b64) & 1;
+    (*b64) >>= 1;
+    return b;
 }
 
 // Fixed sigma = 0.75 and center = 0
@@ -83,16 +86,13 @@ int sampler_1(void *ctx){
     };
     int32_t d = 0;
     static uint64_t b64 = 0, cnt = 0;
-    uint8_t b8 = prng_get_u8(rng), b;
+    uint8_t b8 = prng_get_u8(rng);
     if(b8 < 254) {
         uint8_t whichcol = col_index[b8];
         d = m1_index[whichcol][m1_col_sum[whichcol] - ((b8 >> (7 - whichcol)) & 1) - 1];
         if(whichcol != 7)
             return (b8 & 1) ? d : -d;
-        check_cnt(&cnt, &b64, rng);
-        b = b64 & 1;
-        b64 >>= 1;
-        return b ? d : -d;
+        return check_cnt(&cnt, &b64, rng) ? d : -d;
     }
     d = b8 & 1;
     for(int col = 8; col < 64; ++col) {
@@ -107,10 +107,7 @@ int sampler_1(void *ctx){
         d -= m1_col_sum[col];
         if(d < 0) {
             d = m1_index[col][-(d + 1)];
-            check_cnt(&cnt, &b64, rng);
-            b = b64 & 1;
-            b64 >>= 1;
-            return b ? d : -d;
+            return check_cnt(&cnt, &b64, rng) ? d : -d;
         }
     }
     return 0;
