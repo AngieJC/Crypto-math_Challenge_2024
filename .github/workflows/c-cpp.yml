@@ -19,9 +19,6 @@ jobs:
 
     - name: make
       run: make
-
-    - name: Set TERM enviroment variable
-      run: export TERM=xterm
     
     - name: test
-      run: make test
+      run: export TERM=xterm && make test
