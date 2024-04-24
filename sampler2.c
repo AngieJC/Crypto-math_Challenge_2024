@@ -60,30 +60,30 @@ int sampler_2(void *ctx){
     };
     static const uint16_t m2_col_sum[54] = {990, 931, 1035, 1137, 1455, 1487, 1640, 1733, 1835, 1921, 2033, 2114, 2194, 2304, 2405, 2434, 2529, 2594, 2701, 2696, 2768, 2800, 2957, 2923, 3054, 3062, 3069, 3129, 3095, 3113, 3083, 3066, 3123, 3002, 3160, 3132, 3089, 3078, 3130, 3134, 3018, 3032, 3101, 3090, 3117, 3155, 3035, 3065, 3058, 3095, 3143, 3089, 3072, 3127};
 
-    sampler_context *spc = (sampler_context *)ctx;
-    int32_t d = (prng_get_u8(&spc->p) << 2) + (prng_get_u8(&spc->p) & 0b11), b = 0;
-    uint64_t bs = 0, cnt = 0;
+    prng *restrict rng = &((sampler_context *)ctx)->p;
+    int32_t d = (prng_get_u8(rng) << 2) + (prng_get_u8(rng) & 0b11), b = 0;
+    uint64_t b64 = 0, cnt = 0;
     
     for(int col = 0; col < 17; ++col) {
         if(cnt == 0) {
-            bs = prng_get_u64(&spc->p);
+            b64 = prng_get_u64(rng);
             cnt = 0x4000000000000000;
         }
         else
             cnt >>= 1;
-        d = (d << 1) + (bs & 1);
-        bs >>= 1;
+        d = (d << 1) + (b64 & 1);
+        b64 >>= 1;
         d -= m2_col_sum[col];
         if(d < 0) {
             d = m2_index[col][-(d + 1)];
             if(cnt == 0) {
-                bs = prng_get_u64(&spc->p);
+                b64 = prng_get_u64(rng);
                 cnt = 0x4000000000000000;
             }
             else
                 cnt >>= 1;
-            b = bs & 1;
-            bs >>= 1;
+            b = b64 & 1;
+            b64 >>= 1;
             return b ? d : -d;
         }
     }
