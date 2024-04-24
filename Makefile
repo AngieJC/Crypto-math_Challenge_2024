@@ -16,25 +16,36 @@
 #               (normally not needed on x86, both 32-bit and 64-bit)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast #-pg -fno-pie
-LD = gcc
-LDFLAGS = #-pg -no-pie
+CFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast
+CPP = g++
+CPPFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast
+LDTEST = -lCppUTest
+
+PGFLAG = #-pg -no-pie
+CFLAGS += $(PGFLAG)
+LDFLAGS = $(PGFLAG)
 LIBS = #-lm
 
 # =====================================================================
 
-OBJ = sampler.o fpr.o rng.o shake.o util.o my_sampler.o
+OBJ = my_sampler.o sampler.o fpr.o rng.o shake.o util.o
 
-all: test_time sampler2file
+all: test_time sampler2file test_acc
+
+test: test_acc
+	clear && ./test_acc
 
 clean:
-	-rm -f $(OBJ) test_time.o test_time sampler2file.o sampler2file
+	-rm -f $(OBJ) test_time.o test_time sampler2file.o sampler2file test_acc test_acc.o
 
 test_time: test_time.o $(OBJ)
-	$(LD) $(LDFLAGS) -o test_time test_time.o $(OBJ) $(LIBS)
+	$(CC) $(LDFLAGS) -o test_time test_time.o $(OBJ) $(LIBS)
 
 sampler2file: sampler2file.o $(OBJ)
-	$(LD) $(LDFLAGS) -o sampler2file sampler2file.o $(OBJ) $(LIBS)
+	$(CC) $(LDFLAGS) -o sampler2file sampler2file.o $(OBJ) $(LIBS)
+
+test_acc: test_acc.o $(OBJ)
+	$(CPP) $(LDFLAGS) -o test_acc test_acc.o $(OBJ) $(LDTEST) $(LIBS)
 
 fpr.o: fpr.c sampler.h fpr.h
 	$(CC) $(CFLAGS) -c -o fpr.o fpr.c
@@ -59,4 +70,7 @@ test_time.o: test_time.c sampler.h
 
 sampler2file.o: sampler2file.c sampler.h
 	$(CC) $(CFLAGS) -c -o sampler2file.o sampler2file.c
+
+test_acc.o: test_acc.cpp sampler.h
+	$(CPP) $(CPPFLAGS) -c -o test_acc.o test_acc.cpp
 

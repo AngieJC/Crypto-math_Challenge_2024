@@ -2,6 +2,7 @@
 __pycache__/
 test_time
 sampler2file
+test_acc
 *.o
 sampler_*_*.txt
 *.out
