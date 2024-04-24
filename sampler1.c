@@ -170,37 +170,3 @@ int sampler_1_SIMD(void *ctx){
     else
         return samples[sample_cnt--];
 }
-
-// Fixed sigma = 1024 and center = 0
-int sampler_2(void *ctx){
-    double sigma = 1024;
-    double center = 0;
-
-    int z = 0;
-
-
-    return z;
-
-}
-
-// Fixed sigma = 1.5 and center c is uniformly distributed over [0,1)
-int sampler_3(void *ctx, double center){
-    double sigma = 1.5;
-
-    int z = 0;
-
-
-    return z;
-
-
-}
-
-// sigma is uniformly distributed over (0.8,1.6) and center is uniformly distributed over [0,1)
-int sampler_4(void *ctx, double sigma, double center){
-
-    int z = 0;
-
-
-    return z;
-
-}

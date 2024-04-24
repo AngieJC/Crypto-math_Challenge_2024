@@ -5,11 +5,13 @@ extern "C" {
     #include "my_sampler.h"
 }
 #include <cmath>
+#include <iostream>
 
 const int numSamples = 100000000; // 采样次数
-const double tolerance = 0.001; // 误差
 double expectedMean; // 期望均值
 double expectedStdDev; // 期望标准差
+double MeanTolerance; // 均值误差误差
+double StdDevTolerance; // 标准差误差
 sampler_shake256_context rng;
 sampler_context sc;
 
@@ -19,8 +21,8 @@ void sample_chara_check(int64_t sum, int64_t sumOfSquares) {
     actualVariance = static_cast<double>(sumOfSquares) / numSamples - actualMean * actualMean;
     actualStdDev = sqrt(actualVariance);
     
-    DOUBLES_EQUAL(expectedMean, actualMean, tolerance);
-    DOUBLES_EQUAL(expectedStdDev, actualStdDev, tolerance);
+    DOUBLES_EQUAL(expectedMean, actualMean, MeanTolerance);
+    DOUBLES_EQUAL(expectedStdDev, actualStdDev, StdDevTolerance);
 }
 
 TEST_GROUP(SamplerTestGroup) {
@@ -30,6 +32,8 @@ TEST_GROUP(SamplerTestGroup) {
 TEST(SamplerTestGroup, Sampler1DistributionTest) {
     expectedMean = 0.0;
     expectedStdDev = 0.75;
+    MeanTolerance = 0.001;
+    StdDevTolerance = 0.001;
     sampler_shake256_init(&rng);
     sampler_shake256_inject(&rng, (const uint8_t *)"sampler_1", strlen("sampler_1"));
     sampler_shake256_flip(&rng);
@@ -46,9 +50,11 @@ TEST(SamplerTestGroup, Sampler1DistributionTest) {
 
 TEST(SamplerTestGroup, Sampler2DistributionTest) {
     expectedMean = 0.0;
-    expectedStdDev = 0;
+    expectedStdDev = 1024;
+    MeanTolerance = 0.1;
+    StdDevTolerance = 0.5;
     sampler_shake256_init(&rng);
-    sampler_shake256_inject(&rng, (const uint8_t *)"sampler_2", strlen("sampler_2"));
+    sampler_shake256_inject(&rng, (const uint8_t *)"sampler_1", strlen("sampler_1"));
     sampler_shake256_flip(&rng);
     Zf(prng_init)(&sc.p, &rng);
 

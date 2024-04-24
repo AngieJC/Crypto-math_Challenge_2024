@@ -28,7 +28,7 @@ LIBS = #-lm
 
 # =====================================================================
 
-OBJ = my_sampler.o sampler.o fpr.o rng.o shake.o util.o
+OBJ = sampler1.o sampler2.o sampler3.o sampler4.o sampler.o fpr.o rng.o shake.o util.o
 
 all: test_time sampler2file test_acc
 
@@ -59,8 +59,17 @@ shake.o: shake.c sampler.h fpr.h
 sampler.o: sampler.c sampler.h
 	$(CC) $(CFLAGS) -c -o sampler.o sampler.c
 
-my_sampler.o: my_sampler.c my_sampler.h
-	$(CC) $(CFLAGS) -c -o my_sampler.o my_sampler.c
+sampler1.o: sampler1.c my_sampler.h
+	$(CC) $(CFLAGS) -c sampler1.c -o sampler1.o
+
+sampler2.o: sampler2.c my_sampler.h
+	$(CC) $(CFLAGS) -c sampler2.c -o sampler2.o
+
+sampler3.o: sampler3.c my_sampler.h
+	$(CC) $(CFLAGS) -c sampler3.c -o sampler3.o
+
+sampler4.o: sampler4.c my_sampler.h
+	$(CC) $(CFLAGS) -c sampler4.c -o sampler4.o
 
 util.o: util.c util.h
 	$(CC) $(CFLAGS) -c -o util.o util.c
