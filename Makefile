@@ -30,13 +30,15 @@ LIBS = #-lm
 
 OBJ = sampler1.o sampler2.o sampler3.o sampler4.o sampler.o fpr.o rng.o shake.o util.o
 
-all: test_time sampler2file test_acc
+EXE = test_time sampler2file test_acc
+
+all: $(EXE)
 
 test: test_acc
 	clear && ./test_acc
 
 clean:
-	-rm -f $(OBJ) test_time.o test_time sampler2file.o sampler2file test_acc test_acc.o
+	-rm -f $(OBJ) test_time.o sampler2file.o test_acc.o test_time sampler2file test_acc
 
 test_time: test_time.o $(OBJ)
 	$(CC) $(LDFLAGS) -o test_time test_time.o $(OBJ) $(LIBS)
@@ -47,39 +49,5 @@ sampler2file: sampler2file.o $(OBJ)
 test_acc: test_acc.o $(OBJ)
 	$(CPP) $(LDFLAGS) -o test_acc test_acc.o $(OBJ) $(LDTEST) $(LIBS)
 
-fpr.o: fpr.c sampler.h fpr.h
-	$(CC) $(CFLAGS) -c -o fpr.o fpr.c
-
-rng.o: rng.c sampler.h fpr.h
-	$(CC) $(CFLAGS) -c -o rng.o rng.c
-
-shake.o: shake.c sampler.h fpr.h
-	$(CC) $(CFLAGS) -c -o shake.o shake.c
-
-sampler.o: sampler.c sampler.h
-	$(CC) $(CFLAGS) -c -o sampler.o sampler.c
-
-sampler1.o: sampler1.c my_sampler.h
-	$(CC) $(CFLAGS) -c sampler1.c -o sampler1.o
-
-sampler2.o: sampler2.c my_sampler.h
-	$(CC) $(CFLAGS) -c sampler2.c -o sampler2.o
-
-sampler3.o: sampler3.c my_sampler.h
-	$(CC) $(CFLAGS) -c sampler3.c -o sampler3.o
-
-sampler4.o: sampler4.c my_sampler.h
-	$(CC) $(CFLAGS) -c sampler4.c -o sampler4.o
-
-util.o: util.c util.h
-	$(CC) $(CFLAGS) -c -o util.o util.c
-
-test_time.o: test_time.c sampler.h
-	$(CC) $(CFLAGS) -c -o test_time.o test_time.c
-
-sampler2file.o: sampler2file.c sampler.h
-	$(CC) $(CFLAGS) -c -o sampler2file.o sampler2file.c
-
-test_acc.o: test_acc.cpp sampler.h
-	$(CPP) $(CPPFLAGS) -c -o test_acc.o test_acc.cpp
-
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
