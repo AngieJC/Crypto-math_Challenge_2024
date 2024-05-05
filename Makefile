@@ -18,7 +18,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast
 CPP = g++
-CPPFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast
+CPPFLAGS = $(CFLAGS)
 LDTEST = -lCppUTest
 
 PGFLAG = #-pg -no-pie

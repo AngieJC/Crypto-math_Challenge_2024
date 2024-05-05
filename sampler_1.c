@@ -19,11 +19,17 @@
  *
  * */
 
+static inline uint64_t
+my_prng_get_u64(prng *p)
+{
+    return *(uint64_t *)(p->buf.d);
+}
+
 static inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
     else {
-        *b64 = prng_get_u64(rng);
+        *b64 = my_prng_get_u64(rng);
         *cnt = 0x4000000000000000;
     }
     uint8_t b = (*b64) & 1;
@@ -80,11 +86,10 @@ int sampler_1(void *ctx){
     };
     static uint64_t b64 = 0, cnt = 0;
     int32_t d = prng_get_u8(rng);
-    if(d < 254) {
-        if(d < 252)
-            return sample_val[d];
+    if(d < 252)
+        return sample_val[d];
+    if(d < 254)
         return check_cnt(&cnt, &b64, rng) ? sample_val[d] : -sample_val[d];
-    }
     d &= 1;
     #if defined __GNUC__
     #pragma GCC unroll 16
