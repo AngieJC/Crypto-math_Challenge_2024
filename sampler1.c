@@ -38,9 +38,7 @@ static inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, 
 int sampler_1(void *ctx){
     prng *restrict rng = &((sampler_context *)ctx)->p;
 
-    static const uint8_t m1_index[64][5] = {
-        {0, 0, 0, 0, 0}, {1, 0, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, 
-        {0, 1, 0, 0, 0}, {1, 2, 0, 0, 0}, {1, 2, 0, 0, 0}, {1, 2, 0, 0, 0}, 
+    static const uint8_t m1_index[56][5] = {
         {1, 2, 0, 0, 0}, {1, 2, 0, 0, 0}, {0, 1, 0, 0, 0}, {1, 3, 0, 0, 0}, 
         {0, 0, 0, 0, 0}, {1, 2, 3, 0, 0}, {0, 2, 3, 0, 0}, {0, 1, 2, 3, 0}, 
         {1, 2, 0, 0, 0}, {1, 3, 0, 0, 0}, {1, 3, 0, 0, 0}, {1, 0, 0, 0, 0}, 
@@ -56,8 +54,7 @@ int sampler_1(void *ctx){
         {0, 1, 2, 3, 0}, {2, 3, 0, 0, 0}, {1, 4, 0, 0, 0}, {2, 3, 0, 0, 0}, 
         {3, 0, 0, 0, 0}, {1, 3, 4, 0, 0}, {0, 3, 4, 0, 0}, {0, 1, 2, 0, 0}
     };
-    static const uint8_t m1_col_sum[64] = {
-        1, 1, 1, 0, 2, 2, 2, 2, 
+    static const uint8_t m1_col_sum[56] = {
         2, 2, 2, 2, 1, 3, 3, 4, 
         2, 2, 2, 1, 4, 1, 3, 3, 
         2, 5, 4, 1, 4, 2, 2, 1, 
@@ -84,25 +81,16 @@ int sampler_1(void *ctx){
         0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , -1, -1, -1, -1, 
         1 , 1 , -1, -1, 2 , 2 , -2, -2, 1 , -1, 2 , -2, 1 , 2 , 8 , 8
     };
-    int32_t d = 0;
     static uint64_t b64 = 0, cnt = 0;
-    uint8_t b8 = prng_get_u8(rng);
-    if(b8 < 254) {
-        if(b8 < 252)
-            return sample_val[b8];
-        return check_cnt(&cnt, &b64, rng) ? sample_val[b8] : -sample_val[b8];
+    int32_t d = prng_get_u8(rng);
+    if(d < 254) {
+        if(d < 252)
+            return sample_val[d];
+        return check_cnt(&cnt, &b64, rng) ? sample_val[d] : -sample_val[d];
     }
-    d = b8 & 1;
-    for(int col = 8; col < 64; ++col) {
-        if(cnt == 0) { // 玄学：如果这里改成 check_cnt 会慢 0.02s
-            b64 = prng_get_u64(rng);
-            cnt = 0x4000000000000000;
-        }
-        else
-            cnt >>= 1;
-        d = (d << 1) + (b64 & 1);
-        b64 >>= 1;
-        d -= m1_col_sum[col];
+    d &= 1;
+    for(int col = 0; col < 56; ++col) {
+        d = (d << 1) + check_cnt(&cnt, &b64, rng) - m1_col_sum[col];
         if(d < 0) {
             d = m1_index[col][-(d + 1)];
             return check_cnt(&cnt, &b64, rng) ? d : -d;
