@@ -19,9 +19,6 @@
  *
  * */
 
-typedef uint8_t v512u8 __attribute__ ((vector_size (512 / 8)));
-typedef int8_t v512i8 __attribute__ ((vector_size (512 / 8)));
-
 static inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
@@ -89,7 +86,9 @@ int sampler_1(void *ctx){
         return check_cnt(&cnt, &b64, rng) ? sample_val[d] : -sample_val[d];
     }
     d &= 1;
+    #if defined __GNUC__
     #pragma GCC unroll 16
+    #endif
     for(int col = 0; col < 16; ++col) {
         d = (d << 1) + check_cnt(&cnt, &b64, rng) - m1_col_sum[col];
         if(d < 0) {
@@ -105,55 +104,4 @@ static inline void u64_to_v512ui(uint64_t x, v512u8 *v) {
         (*v)[i] = x & 1;
         x >>= 1;
     }
-}
-
-int sampler_1_SIMD(void *ctx){
-    sampler_context *spc;
-    spc = (sampler_context *)ctx;
-
-    static const uint8_t m1_index[64][5] = {
-        {0, 0, 0, 0, 0}, {1, 0, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {1, 2, 0, 0, 0}, {1, 2, 0, 0, 0}, {1, 2, 0, 0, 0}, 
-        {1, 2, 0, 0, 0}, {1, 2, 0, 0, 0}, {0, 1, 0, 0, 0}, {1, 3, 0, 0, 0}, {0, 0, 0, 0, 0}, {1, 2, 3, 0, 0}, {0, 2, 3, 0, 0}, {0, 1, 2, 3, 0}, 
-        {1, 2, 0, 0, 0}, {1, 3, 0, 0, 0}, {1, 3, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 1, 2, 4, 0}, {0, 0, 0, 0, 0}, {0, 3, 4, 0, 0}, {1, 3, 4, 0, 0}, 
-        {0, 4, 0, 0, 0}, {0, 1, 2, 3, 4}, {0, 1, 2, 4, 0}, {1, 0, 0, 0, 0}, {0, 1, 2, 3, 0}, {1, 2, 0, 0, 0}, {0, 4, 0, 0, 0}, {1, 0, 0, 0, 0}, 
-        {0, 1, 2, 0, 0}, {1, 2, 3, 0, 0}, {1, 2, 4, 0, 0}, {2, 3, 4, 0, 0}, {0, 1, 4, 0, 0}, {0, 2, 3, 4, 0}, {1, 3, 0, 0, 0}, {1, 3, 0, 0, 0}, 
-        {1, 0, 0, 0, 0}, {1, 2, 3, 4, 0}, {2, 4, 0, 0, 0}, {0, 4, 0, 0, 0}, {4, 0, 0, 0, 0}, {0, 1, 3, 4, 0}, {4, 0, 0, 0, 0}, {0, 1, 2, 3, 0}, 
-        {0, 4, 0, 0, 0}, {2, 0, 0, 0, 0}, {0, 1, 2, 0, 0}, {3, 4, 0, 0, 0}, {0, 1, 2, 3, 4}, {3, 4, 0, 0, 0}, {0, 1, 2, 3, 4}, {0, 2, 3, 0, 0}, 
-        {0, 1, 2, 3, 0}, {2, 3, 0, 0, 0}, {1, 4, 0, 0, 0}, {2, 3, 0, 0, 0}, {3, 0, 0, 0, 0}, {1, 3, 4, 0, 0}, {0, 3, 4, 0, 0}, {0, 1, 2, 0, 0}
-    };
-    static const uint8_t m1_col_sum[64] = {
-        1, 1, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 3, 4, 2, 2, 2, 1, 4, 1, 3, 3, 2, 5, 4, 1, 4, 2, 2, 1, 3, 3, 3, 3, 3, 4, 2, 2, 1, 4, 2, 2, 1, 4, 1, 4, 2, 1, 3, 2, 5, 2, 5, 3, 4, 2, 2, 2, 1, 3, 3, 3
-    };
-    static uint8_t sample_cnt = 0;
-    static int8_t samples[64] = {0};
-
-    if(sample_cnt == 0) {
-        sample_cnt = 63;
-        v512u8 vcom = {0}, vWhichCol = {0}, vb = {0};
-        v512i8 vd = {0};
-        v512u8 vflag = {1, 1, 1, 1, 1, 1, 1, 1, 
-                        1, 1, 1, 1, 1, 1, 1, 1, 
-                        1, 1, 1, 1, 1, 1, 1, 1, 
-                        1, 1, 1, 1, 1, 1, 1, 1, 
-                        1, 1, 1, 1, 1, 1, 1, 1, 
-                        1, 1, 1, 1, 1, 1, 1, 1, 
-                        1, 1, 1, 1, 1, 1, 1, 1, 
-                        1, 1, 1, 1, 1, 1, 1, 1};
-        for(int col = 0; col < 64; ++col) {
-            u64_to_v512ui(prng_get_u64(&spc->p), &vb);
-            vd = vd + vflag * (vd + vb);
-            vcom = (vd >= m1_col_sum[col]) & 1;
-            vd -= vflag * m1_col_sum[col];
-            vflag &= vcom;
-            vWhichCol += vflag;
-        }
-        u64_to_v512ui(prng_get_u64(&spc->p), &vb); // 优化：上面用过的随机数在这里再用一遍其实不会采样的随机性，所以这一行可以注释掉
-        for(int i = 0; i < 64; ++i) {
-            vd[i] = m1_index[vWhichCol[i]][-(vd[i] + 1)];
-            samples[i] = vb[i] ? vd[i] : -vd[i];
-        }
-        return samples[0];
-    }
-    else
-        return samples[sample_cnt--];
 }
