@@ -28,7 +28,7 @@ LIBS = #-lm
 
 # =====================================================================
 
-OBJ = sampler1.o sampler2.o sampler3.o sampler4.o sampler.o fpr.o rng.o shake.o util.o
+OBJ = sampler_1.o sampler_2.o sampler_3.o sampler_4.o sampler.o fpr.o rng.o shake.o util.o
 
 EXE = test_time sampler2file test_acc
 
