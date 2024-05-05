@@ -89,6 +89,7 @@ int sampler_1(void *ctx){
         return check_cnt(&cnt, &b64, rng) ? sample_val[d] : -sample_val[d];
     }
     d &= 1;
+    #pragma GCC unroll 16
     for(int col = 0; col < 16; ++col) {
         d = (d << 1) + check_cnt(&cnt, &b64, rng) - m1_col_sum[col];
         if(d < 0) {
