@@ -98,10 +98,3 @@ int sampler_1(void *ctx){
     }
     return 0;
 }
-
-static inline void u64_to_v512ui(uint64_t x, v512u8 *v) {
-    for(int i = 0; i < 64; ++i) {
-        (*v)[i] = x & 1;
-        x >>= 1;
-    }
-}
