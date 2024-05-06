@@ -15,7 +15,11 @@ sampler_*_*.txt
 *.s
 
 # figs
-gprof_figs/
+gprof_figs/*
+!gprof_figs/sampler_1.eps
+!gprof_figs/sampler_2.eps
+!gprof_figs/sampler_3.eps
+!gprof_figs/sampler_4.eps
 
 # doc
 doc/*
