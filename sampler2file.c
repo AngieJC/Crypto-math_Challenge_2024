@@ -1,3 +1,10 @@
+/*
+ * @Author: AngieJC htk90uggk@outlook.com
+ * @Date: 2024-04-30 15:26:56
+ * @LastEditors: AngieJC htk90uggk@outlook.com
+ * @LastEditTime: 2024-05-06 16:50:31
+ * @FilePath: /Crypto-math_Challenge_2024/sampler2file.c
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "sampler.h"
@@ -26,7 +33,7 @@ int main(int argc, char **argv) {
     Zf(prng_init)(&sc.p, &rng);
 
     sprintf(file_name, "./chi_test/sampler_%d_%lu.txt", sampler, samples);
-    printf("Write sampler to file: %s\n", file_name);
+    printf("Write samples to file: %s\n", file_name);
     fflush(stdout);
     FILE *f = fopen(file_name, "w");
     sprintf(first_line, "mu = %f, sigma = %f\n", mu, sigma);
