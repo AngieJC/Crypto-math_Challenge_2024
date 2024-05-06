@@ -21,3 +21,7 @@ gprof_figs/
 doc/*
 !doc/Sampler.tex
 !doc/Sampler.pdf
+!doc/Constant-Time_Discrete_Gaussian_Sampling.pdf
+!doc/Gaussian_Sampling_over_the_Integers_Efficient_Generic_Constant-Time.pdf
+!doc/Pushing_the_speed_limit_of_constant-time_discrete_Gaussian_sampling_-_A_case_study_on_the_Falcon_signature_scheme.pdf
+!doc/赛题二(整数高斯采样算法).pdf
