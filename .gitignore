@@ -1,10 +1,23 @@
 .vscode/
 __pycache__/
+
+# binary files
 test_time
 sampler2file
 test_acc
 *.o
-sampler_*_*.txt
 *.out
+
+# output files
+sampler_*_*.txt
+
+# assembly files
 *.s
+
+# figs
 gprof_figs/
+
+# doc
+doc/*
+!doc/Sampler.tex
+!doc/Sampler.pdf
