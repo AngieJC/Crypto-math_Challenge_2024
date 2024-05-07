@@ -1,3 +1,10 @@
+/*
+ * @Author: AngieJC htk90uggk@outlook.com
+ * @Date: 2024-05-06 22:34:47
+ * @LastEditors: AngieJC htk90uggk@outlook.com
+ * @LastEditTime: 2024-05-07 11:46:47
+ * @FilePath: /Crypto-math_Challenge_2024/test_acc.cpp
+ */
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 extern "C" {

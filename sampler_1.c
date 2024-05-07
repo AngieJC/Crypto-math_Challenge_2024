@@ -19,13 +19,12 @@
  *
  * */
 
-static inline uint64_t
-my_prng_get_u64(prng *p)
+inline uint64_t my_prng_get_u64(prng *p)
 {
     return *(uint64_t *)(p->buf.d);
 }
 
-static inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *restrict rng) {
+inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
     else {
