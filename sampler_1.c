@@ -24,7 +24,7 @@ inline uint64_t my_prng_get_u64(prng *p)
     return *(uint64_t *)(p->buf.d);
 }
 
-inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *restrict rng) {
+inline uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prng *__restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
     else {
@@ -38,7 +38,7 @@ inline uint8_t check_cnt(uint64_t *restrict cnt, uint64_t *restrict b64, prng *r
 
 // Fixed sigma = 0.75 and center = 0
 int sampler_1(void *ctx){
-    prng *restrict rng = &((sampler_context *)ctx)->p;
+    prng *__restrict rng = &((sampler_context *)ctx)->p;
 
     static const uint8_t m1_index[16][5] = {
         {1, 2, 0, 0, 0}, {1, 2, 0, 0, 0}, {0, 1, 0, 0, 0}, {1, 3, 0, 0, 0}, 

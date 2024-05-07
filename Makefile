@@ -28,17 +28,16 @@ LIBS = #-lm
 
 # =====================================================================
 
+.PHONY: all clean test bench
+
 OBJ = sampler_1.o sampler_2.o sampler_3.o sampler_4.o sampler.o fpr.o rng.o shake.o util.o
 
-EXE = test_time sampler2file test_acc
+EXE = test_time sampler2file test_acc benchmark
 
 all: $(EXE)
 
 test: test_acc
 	clear && ./test_acc
-
-clean:
-	-rm -f $(OBJ) test_time.o sampler2file.o test_acc.o test_time sampler2file test_acc
 
 test_time: test_time.o $(OBJ)
 	$(CC) $(LDFLAGS) -o test_time test_time.o $(OBJ) $(LIBS)
@@ -49,5 +48,14 @@ sampler2file: sampler2file.o $(OBJ)
 test_acc: test_acc.o $(OBJ)
 	$(CPP) $(LDFLAGS) -o test_acc test_acc.o $(OBJ) $(LDTEST) $(LIBS)
 
+benchmark: libdgs.a benchmark.o
+	$(CC) $(LDFLAGS) -o benchmark benchmark.o libdgs.a -lgmp -lmpfr -lm ./libdgs.a
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+libdgs.a: dgs/dgs_bern.o dgs/dgs_gauss_dp.o dgs/dgs_gauss_mp.o dgs/dgs_rround_dp.o dgs/dgs_rround_mp.o
+	ar rcs $@ $^
+
+clean:
+	-rm -f *.o $(EXE) libdgs.a

@@ -5,8 +5,10 @@ __pycache__/
 test_time
 sampler2file
 test_acc
+benchmark
 *.o
 *.out
+*.a
 
 # output files
 sampler_*_*.txt
