@@ -23,8 +23,6 @@ int sampler_3(void *ctx, double center);
 
 int sampler_4(void *ctx, double sigma, double center);
 
-uint64_t my_prng_get_u64(prng *);
-
 uint8_t check_cnt(uint64_t *__restrict, uint64_t *__restrict, prng *__restrict);
 
 #endif

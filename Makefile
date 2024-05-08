@@ -28,7 +28,7 @@ LIBS = #-lm
 
 # =====================================================================
 
-.PHONY: all clean test bench
+.PHONY: all clean test
 
 OBJ = sampler_1.o sampler_2.o sampler_3.o sampler_4.o sampler.o fpr.o rng.o shake.o util.o
 

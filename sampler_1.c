@@ -1,3 +1,10 @@
+/*
+ * @Author: AngieJC htk90uggk@outlook.com
+ * @Date: 2024-05-08 09:16:03
+ * @LastEditors: AngieJC htk90uggk@outlook.com
+ * @LastEditTime: 2024-05-08 09:20:24
+ * @FilePath: /Crypto-math_Challenge_2024/sampler_1.c
+ */
 #include "my_sampler.h"
 
 /*
@@ -19,16 +26,11 @@
  *
  * */
 
-inline uint64_t my_prng_get_u64(prng *p)
-{
-    return *(uint64_t *)(p->buf.d);
-}
-
 inline uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prng *__restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
     else {
-        *b64 = my_prng_get_u64(rng);
+        *b64 = prng_get_u64(rng);
         *cnt = 0x4000000000000000;
     }
     uint8_t b = (*b64) & 1;
