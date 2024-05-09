@@ -1,3 +1,10 @@
+/*
+ * @Author: AngieJC htk90uggk@outlook.com
+ * @Date: 2024-05-06 22:34:47
+ * @LastEditors: AngieJC htk90uggk@outlook.com
+ * @LastEditTime: 2024-05-09 16:02:30
+ * @FilePath: /Crypto-math_Challenge_2024/util.c
+ */
 #include "util.h"
 
 void usage() {
@@ -24,7 +31,7 @@ void parse_arg(int argc, char **argv, int *sampler, double *sigma, double *mu, u
     }
     else if(*sampler == 3) {
         *sigma = 1.5;
-        *mu = strtoull(argv[2], NULL, 10);
+        *mu = strtod(argv[2], NULL);
         *samples = strtoull(argv[3], NULL, 10);
     }
     else {

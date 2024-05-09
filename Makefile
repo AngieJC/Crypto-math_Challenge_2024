@@ -24,7 +24,7 @@ LDTEST = -lCppUTest
 PGFLAG = #-pg -no-pie
 CFLAGS += $(PGFLAG)
 LDFLAGS = $(PGFLAG)
-LIBS = #-lm
+LIBS = -lm
 
 # =====================================================================
 

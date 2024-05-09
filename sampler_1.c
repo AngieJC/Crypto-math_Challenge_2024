@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-08 09:16:03
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-08 09:20:24
+ * @LastEditTime: 2024-05-09 22:18:46
  * @FilePath: /Crypto-math_Challenge_2024/sampler_1.c
  */
 #include "my_sampler.h"
@@ -87,7 +87,7 @@ int sampler_1(void *ctx){
     };
     static uint64_t b64 = 0, cnt = 0;
     int32_t d = prng_get_u8(rng);
-    if(d < 252)
+    if(__glibc_likely(d < 252))
         return sample_val[d];
     if(d < 254)
         return check_cnt(&cnt, &b64, rng) ? sample_val[d] : -sample_val[d];

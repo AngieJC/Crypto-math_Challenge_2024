@@ -1,9 +1,12 @@
 \documentclass{article}
 \usepackage[UTF8]{ctex}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{marvosym}
 \usepackage[hidelinks]{hyperref}
+
+\bibliographystyle{plain}
 
 \title{赛题二：离散高斯分布}
 \author{程俊杰$^{\href{mailto:htk90uggk@outlook.com}{\textrm{\Letter}}}$}
@@ -75,6 +78,36 @@
     
     \textbf{空间复杂度}：概率矩阵的行对应采样范围，列对应采样精度，5行24列的矩阵足够满足一亿次采样的精度。因此共需要$5 * (24-8)\mbox{（前8列无需存储）} + (24-8)\mbox{（列和向量）} + 254\mbox{（采样表）} = 390$字节的存储空间。
     
+
+    \section{第二题}
+    略。
+
+    \section{第三题}
+    对于给定离散半高斯分布 $D_{\mathbb{Z}^+, \sigma_{\mathrm{max}}}$，定义分布：
+    \begin{equation}
+        BG_{\sigma_{\mathrm{max}}}(z) = \frac{1}{2} 
+        \begin{cases}
+            D_{\mathbb{Z}^+, \sigma_{\mathrm{max}}}(-z) & z \leq 0 \\
+            D_{\mathbb{Z}^+, \sigma_{\mathrm{max}}}(z - 1) & z \geq 1
+        \end{cases}
+    \end{equation}
+    使用$BG_{\sigma_{\mathrm{max}}}$采样$z_0$，计算$z = (2b - 1) \cdot z_0 + b$，并以概率$p = \exp(\frac{z_0^2}{2\sigma_{\mathrm{max}}^2} - \frac{(z - \mu)^2}{2\sigma^2} - m)$输出$z$，则$z$服从$D_{\mathbb{Z}, \sigma, \mu}$，其中$b$为0-1随机数，$m$为使得$p \in (0, 1)$的偏值。
+
+    Howe等人\cite{q3}给出了$D_{\mathbb{Z}^+, 1.8205}$各点的采样概率（怎么算出来的没看明白），使用该分布构造的$BG_{1.8205}$与第三题需要实现的概率分布拟合度较高，$m$取0.391790725992496即可满足要求，如图~\ref{fig:q3}~所示。
+    \begin{figure}[htb]
+        \centering
+        \includegraphics[width=.6\textwidth]{q3_0.5.png}
+        \caption{$BG_{\sigma_{\mathrm{max}}}(z)$与目标分布}
+        \label{fig:q3}
+    \end{figure}
+
+    由于有了$D_{\mathbb{Z}^+, 1.8205}$各点的采样概率，则可以直接使用第一题的采样算法实现，并在此基础上构造$BG_{1.8205}$和$D_{\mathbb{Z}, \sigma, \mu}$。
+
+    \textbf{目前存在的问题}：
+    \begin{enumerate}
+        \item $\mathrm{exp}(x)$使用Howe等人\cite{q3}给出的泰勒展开计算误差较大，采样结果无法通过卡方检测，使用数学库math则可以通过检测。但是奇怪的是math库也是泰勒展开近似的。
+        \item $BG_{1.8205}$离目标分布还有一定的差距，如果能有更好的拟合，即图~\ref{fig:q3}~中的两条曲线更接近，那么拒绝采样率会更低。可以预见，$BG_{1.7}$有更好的拟合度，但是我还求不来:(
+    \end{enumerate}
     
     \appendix
     \newpage
@@ -84,4 +117,6 @@
         \includegraphics[width=.6\textwidth]{../gprof_figs/sampler_1.eps}
         \caption{各函数运行时间占比}
     \end{figure}
+
+    \bibliography{Sampler.bib}
 \end{document}

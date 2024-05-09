@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-04-13 11:22:48
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-04-13 11:39:57
+ * @LastEditTime: 2024-05-09 23:44:23
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     duration = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time: %fs\n", duration);
     printf("%.0f samples per seccond\n", samples / duration);
-    printf("%llu clocks per sample\n", 
+    printf("%zu clocks per sample\n", 
         (
             ((int64_t)tsc_end_lo | ((int64_t)tsc_end_hi) << 32) - 
             ((int64_t)tsc_start_lo | ((int64_t)tsc_start_hi) << 32)
