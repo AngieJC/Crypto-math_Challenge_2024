@@ -2,8 +2,10 @@
 \usepackage[UTF8]{ctex}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsthm}
 \usepackage{graphicx}
 \usepackage{marvosym}
+\usepackage{xeCJKfntef}
 \usepackage[hidelinks]{hyperref}
 
 \bibliographystyle{plain}
@@ -24,6 +26,7 @@
             0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
             0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
         \end{pmatrix}
+        \mbox{。}
     \end{equation}
     
     
@@ -90,8 +93,33 @@
             D_{\mathbb{Z}^+, \sigma_{\mathrm{max}}}(-z) & z \leq 0 \\
             D_{\mathbb{Z}^+, \sigma_{\mathrm{max}}}(z - 1) & z \geq 1
         \end{cases}
+        \mbox{。}
     \end{equation}
-    使用$BG_{\sigma_{\mathrm{max}}}$采样$z_0$，计算$z = (2b - 1) \cdot z_0 + b$，并以概率$p = \exp(\frac{z_0^2}{2\sigma_{\mathrm{max}}^2} - \frac{(z - \mu)^2}{2\sigma^2} - m)$输出$z$，则$z$服从$D_{\mathbb{Z}, \sigma, \mu}$，其中$b$为0-1随机数，$m$为使得$p \in (0, 1)$的偏值。
+    使用$BG_{\sigma_{\mathrm{max}}}$采样$z_0$，计算$z = (2b - 1) \cdot z_0 + b$，并以概率$p = \exp(\frac{z_0^2}{2\sigma_{\mathrm{max}}^2} - \frac{(z - \mu)^2}{2\sigma^2} \CJKsout{- m})$输出$z$，则$z$服从$D_{\mathbb{Z}, \sigma, \mu}$，其中$b$为0-1随机数\CJKsout{，$m$为使得$p \in (0, 1)$的偏值}，$p \leq 1$。
+
+    \begin{equation}
+        p = \frac{D_{\mathbb{Z}, \sigma, \mu}(z)}{BG_{\sigma_{\mathrm{max}}}(z)} = 
+        \begin{cases}
+            \exp(\frac{z^2}{2\sigma_{\mathrm{max}}^2} - \frac{(z - \mu)^2}{2\sigma^2}) & z \leq 0 \\
+            \exp(\frac{(z - 1)^2}{2\sigma_{\mathrm{max}}^2} - \frac{(z - \mu)^2}{2\sigma^2}) & z \geq 1
+        \end{cases}
+         = \exp(\frac{z_0^2}{2\sigma_{\mathrm{max}}^2} - \frac{(z - \mu)^2}{2\sigma^2})
+         \mbox{。}
+    \end{equation}
+
+    \begin{proof}
+        已知$\sigma \leq \sigma_{\mathrm{max}}$且$\mu \in [0, 1)$。当$z \leq 0$时，有：
+        \begin{equation*}
+            \frac{z^2}{2\sigma_{\mathrm{max}}^2} \leq \frac{z^2}{2\sigma^2} \leq \frac{(z - \mu)^2}{2\sigma^2}
+            \mbox{。}
+        \end{equation*}
+        当$z \geq 1$时，有：
+        \begin{equation*}
+            \frac{(z - 1)^2}{2\sigma_{\mathrm{max}}^2} \leq \frac{(z - 1)^2}{2\sigma^2} \leq \frac{(z - \mu)^2}{2\sigma^2}
+            \mbox{。}
+        \end{equation*}
+        综上，有$p \leq 1$。
+    \end{proof}
 
     Howe等人\cite{q3}给出了$D_{\mathbb{Z}^+, 1.8205}$各点的采样概率（怎么算出来的没看明白），使用该分布构造的$BG_{1.8205}$与第三题需要实现的概率分布拟合度较高，$m$取0.391790725992496即可满足要求，如图~\ref{fig:q3}~所示。
     \begin{figure}[htb]
@@ -105,18 +133,37 @@
 
     \textbf{目前存在的问题}：
     \begin{enumerate}
-        \item $\mathrm{exp}(x)$使用Howe等人\cite{q3}给出的泰勒展开计算误差较大，采样结果无法通过卡方检测，使用数学库math则可以通过检测。但是奇怪的是math库也是泰勒展开近似的。
-        \item $BG_{1.8205}$离目标分布还有一定的差距，如果能有更好的拟合，即图~\ref{fig:q3}~中的两条曲线更接近，那么拒绝采样率会更低。可以预见，$BG_{1.7}$有更好的拟合度，但是我还求不来:(
+        \item \CJKsout{$\mathrm{exp}(x)$使用Howe等人\cite{q3}给出的泰勒展开计算误差较大，采样结果无法通过卡方检测，使用数学库math则可以通过检测。但是奇怪的是math库也是泰勒展开近似的。}
+        
+        Howe等人给出的泰勒展开要求$x \in [-\ln(2), 0]$，然而实际上$x$经常远小于$-\ln(2)$，因此泰勒展开的误差较大。若$x < -\ln(2)$，则递归地计算$e^x = (e^{x/2})^2$，可以有效减小误差。
+
+        \item $BG_{1.8205}$离目标分布还有一定的差距，如果能有更好的拟合，即图~\ref{fig:q3}~中的两条曲线更接近，那么拒绝采样率会更低。\CJKsout{可以预见，$BG_{1.7}$有更好的拟合度，但是我还求不来:(}。求不来是真的，但是还是别随便预见了。
     \end{enumerate}
-    
+
+    \section{第四题}
+    使用第三题算法即可，略。
+
+    \textbf{目前性能较低的部分}：
+    \begin{enumerate}
+        \item 计算$e^x$需要大量浮点数乘法，且为满足精度，目前为递归函数。
+        \item $D_{\mathbb{Z}^+, 1.8205}$对于第三题和第四题来说可能不是非常合适，但是看不明白离散半高斯分布各点概率是怎么算的，只能用这个凑合。
+    \end{enumerate}
+
+    \bibliography{Sampler.bib}
+
     \appendix
     \newpage
     \section{第一题性能分析图}
     \begin{figure}[htb]
         \centering
         \includegraphics[width=.6\textwidth]{../gprof_figs/sampler_1.eps}
-        \caption{各函数运行时间占比}
+        \caption{第一题各函数运行时间占比}
     \end{figure}
 
-    \bibliography{Sampler.bib}
+    \section*{第三题性能分析图}
+    \begin{figure}[htb]
+        \centering
+        \includegraphics[width=.6\textwidth]{../gprof_figs/sampler_3.eps}
+        \caption{第三题各函数运行时间占比}
+    \end{figure}
 \end{document}

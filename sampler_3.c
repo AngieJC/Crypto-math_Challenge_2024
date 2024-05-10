@@ -2,12 +2,10 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-09 22:31:24
+ * @LastEditTime: 2024-05-10 10:41:01
  * @FilePath: /Crypto-math_Challenge_2024/sampler_3.c
  */
 #include "my_sampler.h"
-#include <stdio.h>
-#include <math.h>
 
 static int sampler_base_3(prng *__restrict rng){
     static const uint8_t m3_index[56][10] = {
@@ -73,18 +71,25 @@ static int sampler_base_3(prng *__restrict rng){
     return 0;
 }
 
+static double my_exp(double x) {
+    if(x < -0.6931471805599453) {
+        double y = my_exp(x * 0.5);
+        return y * y;
+    }
+    double p = 1 + x + 0.5 * x * x + 
+            0.16666666658538531 * x * x * x + 
+            0.041666667747152886 * x * x * x * x + 
+            0.008333325351663756 * x * x * x * x * x + 
+            0.001388924568049621 * x * x * x * x * x * x + 
+            0.00019831243191621023 * x * x * x * x * x * x * x +
+            2.4979316805525884e-05 * x * x * x * x * x * x * x * x + 
+            2.564104613920104e-06 * x * x * x * x * x * x * x * x * x +
+            3.8819594624219325e-07 * x * x * x * x * x * x * x * x * x * x;
+    return p;
+}
+
 inline static int accept_sample(double x, prng *__restrict rng) {
-    double p = 0;
-    // p = 1 + x + 0.5 * x * x + 
-    //     0.16666666658538531 * x * x * x + 
-    //     0.041666667747152886 * x * x * x * x + 
-    //     0.008333325351663756 * x * x * x * x * x + 
-    //     0.001388924568049621 * x * x * x * x * x * x + 
-    //     0.00019831243191621023 * x * x * x * x * x * x * x +
-    //     2.4979316805525884e-05 * x * x * x * x * x * x * x * x + 
-    //     2.564104613920104e-06 * x * x * x * x * x * x * x * x * x +
-    //     3.8819594624219325e-07 * x * x * x * x * x * x * x * x * x * x;
-    p = exp(x);
+    double p = my_exp(x);
     uint64_t i = 1;
     uint8_t u, v;
     do {
@@ -105,9 +110,8 @@ int sampler_3(void *ctx, double center){
         uint8_t z0 = sampler_base_3(rng);
         int8_t z = check_cnt(&cnt, &b64, rng) ? z0 + 1 : -z0;
         double x = subtracted_numbers[z0]
-                    - (double)((z - center) * (z - center)) / (2 * 1.5 * 1.5)
-                    - 0.391790725992496;
-        if(accept_sample(x, rng))
+                    - (double)((z - center) * (z - center)) / (2 * 1.5 * 1.5);
+        if(x == 0 || accept_sample(x, rng))
             return z;
     }
 
