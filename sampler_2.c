@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-07 23:48:33
+ * @LastEditTime: 2024-05-10 21:37:01
  * @FilePath: /Crypto-math_Challenge_2024/sampler_2.c
  */
 #include "my_sampler.h"
@@ -70,7 +70,7 @@ int sampler_2(void *ctx){
     prng *__restrict rng = &((sampler_context *)ctx)->p;
     int32_t d = (prng_get_u8(rng) << 2) + (prng_get_u8(rng) & 0b11);
     static uint64_t b64 = 0, cnt = 0;
-    
+
     for(int col = 0; col < 17; ++col) {
         d = (d << 1) + check_cnt(&cnt, &b64, rng) - m2_col_sum[col];
         if(d < 0) {

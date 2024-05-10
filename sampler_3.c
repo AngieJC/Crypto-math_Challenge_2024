@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-10 10:41:01
+ * @LastEditTime: 2024-05-10 22:57:18
  * @FilePath: /Crypto-math_Challenge_2024/sampler_3.c
  */
 #include "my_sampler.h"
@@ -71,20 +71,40 @@ static int sampler_base_3(prng *__restrict rng){
     return 0;
 }
 
-static double my_exp(double x) {
-    if(x < -0.6931471805599453) {
-        double y = my_exp(x * 0.5);
-        return y * y;
+// double my_exp(double x) {
+//     if(x < -0.6931471805599453) {
+//         double y = my_exp(x * 0.5);
+//         return y * y;
+//     }
+//     double p = 1 + x + 0.5 * x * x + 
+//             0.16666666658538531 * x * x * x + 
+//             0.041666667747152886 * x * x * x * x + 
+//             0.008333325351663756 * x * x * x * x * x + 
+//             0.001388924568049621 * x * x * x * x * x * x + 
+//             0.00019831243191621023 * x * x * x * x * x * x * x + 
+//             2.4979316805525884e-05 * x * x * x * x * x * x * x * x + 
+//             2.564104613920104e-06 * x * x * x * x * x * x * x * x * x + 
+//             3.8819594624219325e-07 * x * x * x * x * x * x * x * x * x * x;
+//     return p;
+// }
+
+inline double my_exp(double x) {
+    int cnt = 0;
+    while(__glibc_unlikely(x < -0.6931471805599453)) {
+        x *= 0.5;
+        ++cnt;
     }
     double p = 1 + x + 0.5 * x * x + 
             0.16666666658538531 * x * x * x + 
             0.041666667747152886 * x * x * x * x + 
             0.008333325351663756 * x * x * x * x * x + 
             0.001388924568049621 * x * x * x * x * x * x + 
-            0.00019831243191621023 * x * x * x * x * x * x * x +
+            0.00019831243191621023 * x * x * x * x * x * x * x + 
             2.4979316805525884e-05 * x * x * x * x * x * x * x * x + 
-            2.564104613920104e-06 * x * x * x * x * x * x * x * x * x +
+            2.564104613920104e-06 * x * x * x * x * x * x * x * x * x + 
             3.8819594624219325e-07 * x * x * x * x * x * x * x * x * x * x;
+    while(cnt--)
+        p *= p;
     return p;
 }
 
@@ -97,7 +117,7 @@ inline static int accept_sample(double x, prng *__restrict rng) {
         u = prng_get_u8(rng);
         v = (uint64_t)(p * i) & 0xff;
     } while (u == v);
-    return u < v;    
+    return u < v;
 }
 
 // Fixed sigma = 1.5 and center c is uniformly distributed over [0,1)

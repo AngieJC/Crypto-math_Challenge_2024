@@ -54,7 +54,7 @@
     
     对于情况~\ref{uint8_t_8}，继续运行Knuth-Yao算法直到采样成功。
     
-    对于任意一个8比特随机数，其落在情况\ref{uint8_t_1}~至\ref{uint8_t_6}~的概率为$\frac{63}{64}$，称为关键路径，关键路径上的操作是影响采样速率最主要的因素。路径上的操作有：
+    对于任意一个8比特随机数，其落在情况~\ref{uint8_t_1}~至~\ref{uint8_t_6}~的概率为$\frac{63}{64}$，称为关键路径，关键路径上的操作是影响采样速率最主要的因素。路径上的操作有：
     \begin{itemize}
         \item 获取随机数，随机数生成器存储了512字节的随机数，获取随机数实际上是一个查表操作，即访问一次内存；
         \item 根据随机数查采样表，访问一次内存，返回采样值；
@@ -121,7 +121,7 @@
         综上，有$p \leq 1$。
     \end{proof}
 
-    Howe等人\cite{q3}给出了$D_{\mathbb{Z}^+, 1.8205}$各点的采样概率（怎么算出来的没看明白），使用该分布构造的$BG_{1.8205}$与第三题需要实现的概率分布拟合度较高，$m$取0.391790725992496即可满足要求，如图~\ref{fig:q3}~所示。
+    Howe等人\cite{q3}给出了$D_{\mathbb{Z}^+, 1.8205}$各点的采样概率（怎么算出来的没看明白），使用该分布构造的$BG_{1.8205}$与第三题需要实现的概率分布拟合度较高，\CJKsout{$m$取0.391790725992496即可满足要求，}如图~\ref{fig:q3}~所示。
     \begin{figure}[htb]
         \centering
         \includegraphics[width=.6\textwidth]{q3_0.5.png}
@@ -154,16 +154,33 @@
     \appendix
     \newpage
     \section{第一题性能分析图}
-    \begin{figure}[htb]
+    \begin{figure}[h!]
         \centering
         \includegraphics[width=.6\textwidth]{../gprof_figs/sampler_1.eps}
         \caption{第一题各函数运行时间占比}
     \end{figure}
 
-    \section*{第三题性能分析图}
-    \begin{figure}[htb]
+    \newpage
+    \section{第二题性能分析图}
+    \begin{figure}[h!]
         \centering
-        \includegraphics[width=.6\textwidth]{../gprof_figs/sampler_3.eps}
+        \includegraphics[width=.6\textwidth]{../gprof_figs/sampler_2.eps}
+        \caption{第二题各函数运行时间占比}
+    \end{figure}
+
+    \newpage
+    \section{第三题性能分析图}
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=.9\textwidth]{../gprof_figs/sampler_3.eps}
         \caption{第三题各函数运行时间占比}
+    \end{figure}
+
+    \newpage
+    \section{第四题性能分析图}
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=.9\textwidth]{../gprof_figs/sampler_4.eps}
+        \caption{第四题各函数运行时间占比}
     \end{figure}
 \end{document}

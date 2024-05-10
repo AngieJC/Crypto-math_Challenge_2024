@@ -25,6 +25,6 @@ int sampler_4(void *ctx, double sigma, double center);
 
 uint8_t check_cnt(uint64_t *__restrict, uint64_t *__restrict, prng *__restrict);
 
-// int sampler_base_3(prng *__restrict rng);
+double my_exp(double x);
 
 #endif
