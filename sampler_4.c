@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-10 13:37:15
+ * @LastEditTime: 2024-05-11 20:14:53
  * @FilePath: /Crypto-math_Challenge_2024/sampler_4.c
  */
 #include "my_sampler.h"
@@ -86,12 +86,11 @@ inline static int accept_sample(double x, double sigma, prng *__restrict rng) {
 // sigma is uniformly distributed over (0.8,1.6) and center is uniformly distributed over [0,1)
 int sampler_4(void *ctx, double sigma, double center){
     prng *restrict rng = &((sampler_context *)ctx)->p;
-    static uint64_t b64 = 0, cnt = 0;
     static double subtracted_numbers[] = {0.0, 0.15086504887537272, 0.6034601955014909, 1.3577854398783544, 2.4138407820059635, 3.771626221884318, 5.431141759513418, 7.392387394893263, 9.655363128023854, 12.220068958905191};
 
     while(1) {
         uint8_t z0 = sampler_base_4(rng);
-        int8_t z = check_cnt(&cnt, &b64, rng) ? z0 + 1 : -z0;
+        int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
         double x = subtracted_numbers[z0]
                     - (double)((z - center) * (z - center)) / (2 * sigma * sigma);
         if(accept_sample(x, sigma, rng))

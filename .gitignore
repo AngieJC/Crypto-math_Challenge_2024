@@ -24,6 +24,10 @@ gprof_figs/*
 !gprof_figs/sampler_3.eps
 !gprof_figs/sampler_4.eps
 
+# profiling
+callgrind.out.*
+cachegrind.out.*
+
 # doc
 doc/*
 !doc/Sampler.tex

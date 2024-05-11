@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-08 09:16:03
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-09 22:18:46
+ * @LastEditTime: 2024-05-11 20:09:30
  * @FilePath: /Crypto-math_Challenge_2024/sampler_1.c
  */
 #include "my_sampler.h"
