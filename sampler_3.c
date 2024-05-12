@@ -78,7 +78,7 @@ static int sampler_base_3(prng *__restrict rng){
 
 inline double my_exp(double x) {
     int cnt = 0;
-    while(x < -1) {
+    while(x < -0.8) {
         x *= 0.5;
         ++cnt;
     }

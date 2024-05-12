@@ -28,6 +28,7 @@ gprof_figs/*
 callgrind.out.*
 cachegrind.out.*
 *.gcda
+vgcore.*
 
 # doc
 doc/*
