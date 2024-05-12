@@ -16,7 +16,7 @@
 #               (normally not needed on x86, both 32-bit and 64-bit)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast -march=native #-mno-avx
+CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 -march=native -mno-avx
 CPP = g++
 CPPFLAGS = $(CFLAGS)
 LDTEST = -lCppUTest
@@ -28,7 +28,7 @@ LIBS = #-lm
 
 # =====================================================================
 
-.PHONY: all clean test
+.PHONY: all clean test debug
 
 OBJ = sampler_1.o sampler_2.o sampler_3.o sampler_4.o sampler.o fpr.o rng.o shake.o util.o
 
@@ -59,3 +59,6 @@ libdgs.a: dgs/dgs_bern.o dgs/dgs_gauss_dp.o dgs/dgs_gauss_mp.o dgs/dgs_rround_dp
 
 clean:
 	-rm -f *.o $(EXE) libdgs.a
+
+debug:
+	$(CC) fpr.c rng.c sampler_1.c sampler_2.c sampler_3.c sampler_4.c sampler.c shake.c util.c test_time.c -o test_time -g

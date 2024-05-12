@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-08 09:21:03
+ * @LastEditTime: 2024-05-12 17:20:47
  * @FilePath: /Crypto-math_Challenge_2024/test_acc.cpp
  */
 #include "CppUTest/CommandLineTestRunner.h"
@@ -14,7 +14,7 @@ extern "C" {
 #include <cmath>
 #include <iostream>
 
-const int numSamples = 100000000; // 采样次数
+const int numSamples = 10000000; // 采样次数
 double expectedMean; // 期望均值
 double expectedStdDev; // 期望标准差
 double MeanTolerance; // 均值误差误差
@@ -61,7 +61,7 @@ TEST(SamplerTestGroup, Sampler2DistributionTest) {
     MeanTolerance = 0.2;
     StdDevTolerance = 0.5;
     sampler_shake256_init(&rng);
-    sampler_shake256_inject(&rng, (const uint8_t *)"sampler_1", strlen("sampler_1"));
+    sampler_shake256_inject(&rng, (const uint8_t *)"sampler_2", strlen("sampler_2"));
     sampler_shake256_flip(&rng);
     Zf(prng_init)(&sc.p, &rng);
 
@@ -72,6 +72,53 @@ TEST(SamplerTestGroup, Sampler2DistributionTest) {
         sumOfSquares += sample * sample;
     }
     sample_chara_check(sum, sumOfSquares);
+}
+
+TEST(SamplerTestGroup, Sampler3DistributionTest) {
+    double expectedMeans[] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.999999};
+    expectedStdDev = 1.5;
+    MeanTolerance = 0.001;
+    StdDevTolerance = 0.001;
+    sampler_shake256_init(&rng);
+    sampler_shake256_inject(&rng, (const uint8_t *)"sampler_3", strlen("sampler_3"));
+    sampler_shake256_flip(&rng);
+    Zf(prng_init)(&sc.p, &rng);
+
+    for(auto i = 0; i < 11; ++i) {
+        int64_t sum = 0, sumOfSquares = 0;
+        expectedMean = expectedMeans[i];
+        for(int j = 0; j < numSamples; ++j) {
+            int sample = sampler_3(&sc, expectedMean);
+            sum += sample;
+            sumOfSquares += sample * sample;
+        }
+        sample_chara_check(sum, sumOfSquares);
+    }
+}
+
+TEST(SamplerTestGroup, Sampler4DistributionTest) {
+    double expectedMeans[] = {0.0, 0.5, 0.999999};
+    double expectedStdDevs[] = {0.800001, 1.2, 1.599999};
+    MeanTolerance = 0.001;
+    StdDevTolerance = 0.001;
+    sampler_shake256_init(&rng);
+    sampler_shake256_inject(&rng, (const uint8_t *)"sampler_4", strlen("sampler_4"));
+    sampler_shake256_flip(&rng);
+    Zf(prng_init)(&sc.p, &rng);
+
+    for(auto i = 0; i < 3; ++i) {
+        expectedMean = expectedMeans[i];
+        for(auto j = 0; j < 3; ++j) {
+            int64_t sum = 0, sumOfSquares = 0;
+            expectedStdDev = expectedStdDevs[j];
+            for(int k = 0; k < numSamples; ++k) {
+                int sample = sampler_4(&sc, expectedStdDev, expectedMean);
+                sum += sample;
+                sumOfSquares += sample * sample;
+            }
+            sample_chara_check(sum, sumOfSquares);
+        }
+    }
 }
 
 int main(int argc, char **argv) {
