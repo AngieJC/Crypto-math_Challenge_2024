@@ -2,12 +2,12 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-12 20:51:52
+ * @LastEditTime: 2024-05-12 23:07:04
  * @FilePath: /Crypto-math_Challenge_2024/sampler_4.c
  */
 #include "my_sampler.h"
 
-static int sampler_base_4(prng *__restrict rng){
+static int sampler_base_4_1_6(prng *__restrict rng){
     static const uint8_t m4_index[56][10] = {
         {2, 3, 5, 0, 0, 0, 0, 0, 0, 0}, {2, 4, 5, 0, 0, 0, 0, 0, 0, 0}, {0, 4, 0, 0, 0, 0, 0, 0, 0, 0}, 
         {3, 4, 6, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 2, 3, 4, 0, 0, 0, 0, 0}, {0, 1, 3, 4, 5, 6, 0, 0, 0, 0}, 
@@ -77,8 +77,39 @@ static int sampler_base_4(prng *__restrict rng){
     return 0;
 }
 
-inline static int accept_sample(double x, double sigma, prng *__restrict rng) {
-    double p = (0.8 / sigma) * my_exp(x);
+static int sampler_base_4_1_2(prng *__restrict rng){
+    static const uint8_t m4_index[56][10] = {
+        {0, 2, 3, 0, 0, 0, 0, 0, 0, 0}, {1, 2, 4, 0, 0, 0, 0, 0, 0, 0}, {0, 4, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 2, 3, 4, 0, 0, 0, 0, 0, 0}, {0, 2, 3, 4, 0, 0, 0, 0, 0, 0}, {0, 1, 3, 4, 5, 0, 0, 0, 0, 0}, {0, 2, 4, 0, 0, 0, 0, 0, 0, 0}, {1, 5, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 2, 3, 5, 0, 0, 0, 0, 0, 0}, {0, 1, 3, 4, 0, 0, 0, 0, 0, 0}, {0, 1, 4, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 3, 6, 0, 0, 0, 0, 0, 0}, {0, 1, 2, 3, 4, 5, 6, 0, 0, 0}, {1, 2, 3, 4, 5, 6, 0, 0, 0, 0}, {1, 2, 3, 5, 6, 0, 0, 0, 0, 0}, {1, 4, 6, 0, 0, 0, 0, 0, 0, 0}, {0, 2, 0, 0, 0, 0, 0, 0, 0, 0}, {1, 2, 3, 4, 7, 0, 0, 0, 0, 0}, {1, 6, 0, 0, 0, 0, 0, 0, 0, 0}, {1, 2, 4, 6, 7, 0, 0, 0, 0, 0}, {1, 5, 0, 0, 0, 0, 0, 0, 0, 0}, {2, 3, 4, 7, 0, 0, 0, 0, 0, 0}, {2, 6, 7, 0, 0, 0, 0, 0, 0, 0}, {0, 2, 3, 6, 7, 0, 0, 0, 0, 0}, {1, 2, 3, 4, 5, 7, 0, 0, 0, 0}, {1, 2, 3, 8, 0, 0, 0, 0, 0, 0}, {1, 2, 3, 4, 8, 0, 0, 0, 0, 0}, {1, 8, 0, 0, 0, 0, 0, 0, 0, 0}, {2, 4, 5, 6, 8, 0, 0, 0, 0, 0}, {0, 2, 5, 0, 0, 0, 0, 0, 0, 0}, {4, 6, 8, 0, 0, 0, 0, 0, 0, 0}, {2, 6, 7, 0, 0, 0, 0, 0, 0, 0}, {1, 3, 8, 0, 0, 0, 0, 0, 0, 0}, {6, 9, 0, 0, 0, 0, 0, 0, 0, 0}, {1, 3, 6, 0, 0, 0, 0, 0, 0, 0}, {0, 3, 5, 7, 9, 0, 0, 0, 0, 0}, {2, 3, 6, 8, 0, 0, 0, 0, 0, 0}, {1, 3, 5, 6, 7, 8, 9, 0, 0, 0}, {2, 3, 4, 6, 0, 0, 0, 0, 0, 0}, {1, 2, 3, 5, 7, 8, 9, 0, 0, 0}, {1, 2, 3, 4, 7, 9, 0, 0, 0, 0}, {4, 5, 6, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 3, 5, 8, 9, 0, 0, 0, 0}, {0, 4, 7, 9, 0, 0, 0, 0, 0, 0}, {1, 5, 8, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 2, 3, 5, 7, 8, 9, 0, 0}, {6, 7, 8, 0, 0, 0, 0, 0, 0, 0}, {3, 7, 0, 0, 0, 0, 0, 0, 0, 0}, {5, 7, 8, 9, 0, 0, 0, 0, 0, 0}, {6, 8, 9, 0, 0, 0, 0, 0, 0, 0}, {7, 9, 0, 0, 0, 0, 0, 0, 0, 0}, {6, 7, 0, 0, 0, 0, 0, 0, 0, 0}, {4, 5, 8, 9, 0, 0, 0, 0, 0, 0}, {4, 5, 8, 0, 0, 0, 0, 0, 0, 0}, {7, 9, 0, 0, 0, 0, 0, 0, 0, 0}, {5, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    };
+    static const uint8_t m4_col_sum[56] = {
+        3, 3, 2, 4, 4, 5, 3, 2, 4, 4, 3, 4, 7, 6, 5, 3, 2, 5, 2, 5, 2, 4, 3, 5, 6, 4, 5, 2, 5, 3, 3, 3, 3, 2, 3, 5, 4, 7, 4, 7, 6, 3, 6, 4, 3, 8, 3, 2, 4, 3, 2, 2, 4, 3, 2, 1
+    };
+    static const int8_t sample_val[253] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3
+    };
+    static uint64_t b64 = 0, cnt = 0;
+    int32_t d = prng_get_u8(rng);
+    while(1) {
+        if(__glibc_likely(d < 253))
+            return sample_val[d];
+        d &= 0b11;
+        d -= 1;
+        #if defined __GNUC__
+        #pragma GCC unroll 2
+        #elif defined __clang__
+        #pragma clang loop unroll(2)
+        #endif
+        for(int col = 0; col < 56; ++col) {
+            d = (d << 1) + check_cnt(&cnt, &b64, rng) - m4_col_sum[col];
+            if(d < 0)
+                return m4_index[col][-(d + 1)];
+        }
+    }
+    return 0;
+}
+
+inline static int accept_sample(double x, double sigma_rate, prng *__restrict rng) {
+    double p = sigma_rate * my_exp(x);
     uint64_t i = 1;
     uint8_t u, v;
     do {
@@ -92,15 +123,26 @@ inline static int accept_sample(double x, double sigma, prng *__restrict rng) {
 // sigma is uniformly distributed over (0.8,1.6) and center is uniformly distributed over [0,1)
 int sampler_4(void *ctx, double sigma, double center){
     prng *restrict rng = &((sampler_context *)ctx)->p;
-    static double subtracted_numbers[] = {0.0, 0.19531249999999997, 0.7812499999999999, 1.7578124999999996, 3.1249999999999996, 4.882812499999999, 7.031249999999998, 9.570312499999998, 12.499999999999998, 15.820312499999996};
+    static double subtracted_numbers_1_6[] = {0.0, 0.19531249999999997, 0.7812499999999999, 1.7578124999999996, 3.1249999999999996, 4.882812499999999, 7.031249999999998, 9.570312499999998, 12.499999999999998, 15.820312499999996};
+    static double subtracted_numbers_1_2[] = {0.0, 0.3472222222222222, 1.3888888888888888, 3.125, 5.555555555555555, 8.680555555555555, 12.5, 17.01388888888889, 22.22222222222222, 28.125};
 
     while(1) {
-        uint8_t z0 = sampler_base_4(rng);
-        int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
-        double x = subtracted_numbers[z0]
-                    - (double)((z - center) * (z - center)) / (2 * sigma * sigma);
-        if(accept_sample(x, sigma, rng))
-            return z;
+        if(sigma > 1.2) {
+            uint8_t z0 = sampler_base_4_1_6(rng);
+            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+            double x = subtracted_numbers_1_6[z0]
+                        - (double)((z - center) * (z - center)) / (2 * sigma * sigma);
+            if(accept_sample(x, 1.2 / sigma, rng))
+                return z;
+        }
+        else {
+            uint8_t z0 = sampler_base_4_1_2(rng);
+            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+            double x = subtracted_numbers_1_2[z0]
+                        - (double)((z - center) * (z - center)) / (2 * sigma * sigma);
+            if(accept_sample(x, 0.8 / sigma, rng))
+                return z;
+        }
     }
 
     return 0;
