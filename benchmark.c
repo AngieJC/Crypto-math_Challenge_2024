@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-07 22:48:19
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-08 15:03:27
+ * @LastEditTime: 2024-05-11 22:03:08
  * @FilePath: /Crypto-math_Challenge_2024/benchmark.c
  */
 #include <math.h>
@@ -52,6 +52,32 @@ int main() {
     for(size_t method = 0; method < METHOD_NUM; ++method) {
         start = clock();
         dgs_disc_gauss_dp_t *sampler = dgs_disc_gauss_dp_init(1024, 0, 5, methods[method]);
+        for(size_t i = 0; i < SAMPLES; ++i) {
+            sampler->call(sampler);
+        }
+        end = clock();
+        printf("Method: %s\nTime: %fs\n", methods_name[method], (double)(end - start) / CLOCKS_PER_SEC);
+    }
+
+    // Sampler 3
+    printf("************************************\n");
+    printf("delta = 1.5, center = 0.5\n");
+    for(size_t method = 0; method < METHOD_NUM; ++method) {
+        start = clock();
+        dgs_disc_gauss_dp_t *sampler = dgs_disc_gauss_dp_init(1.5, 0, 5, methods[method]);
+        for(size_t i = 0; i < SAMPLES; ++i) {
+            sampler->call(sampler);
+        }
+        end = clock();
+        printf("Method: %s\nTime: %fs\n", methods_name[method], (double)(end - start) / CLOCKS_PER_SEC);
+    }
+
+    // Sampler 3
+    printf("************************************\n");
+    printf("delta = 1.2, center = 0.5\n");
+    for(size_t method = 0; method < METHOD_NUM; ++method) {
+        start = clock();
+        dgs_disc_gauss_dp_t *sampler = dgs_disc_gauss_dp_init(1.2, 0, 5, methods[method]);
         for(size_t i = 0; i < SAMPLES; ++i) {
             sampler->call(sampler);
         }

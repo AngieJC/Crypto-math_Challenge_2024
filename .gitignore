@@ -27,6 +27,7 @@ gprof_figs/*
 # profiling
 callgrind.out.*
 cachegrind.out.*
+*.gcda
 
 # doc
 doc/*

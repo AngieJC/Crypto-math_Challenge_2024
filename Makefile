@@ -16,7 +16,7 @@
 #               (normally not needed on x86, both 32-bit and 64-bit)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast -march=native -mno-avx
+CFLAGS = -Wall -Wextra -Wshadow -Wundef -Ofast -march=native #-mno-avx
 CPP = g++
 CPPFLAGS = $(CFLAGS)
 LDTEST = -lCppUTest

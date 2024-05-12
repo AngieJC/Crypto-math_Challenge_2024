@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-08 09:16:03
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-11 20:09:30
+ * @LastEditTime: 2024-05-12 09:40:38
  * @FilePath: /Crypto-math_Challenge_2024/sampler_1.c
  */
 #include "my_sampler.h"
@@ -94,6 +94,8 @@ int sampler_1(void *ctx){
     d &= 1;
     #if defined __GNUC__
     #pragma GCC unroll 16
+    #elif defined __clang__
+    #pragma clang loop unroll(full)
     #endif
     for(int col = 0; col < 16; ++col) {
         d = (d << 1) + check_cnt(&cnt, &b64, rng) - m1_col_sum[col];
