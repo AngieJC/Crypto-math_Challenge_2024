@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-12 16:56:36
+ * @LastEditTime: 2024-05-13 22:49:19
  * @FilePath: /Crypto-math_Challenge_2024/sampler_3.c
  */
 #include "my_sampler.h"
@@ -57,11 +57,13 @@ static int sampler_base_3(prng *__restrict rng){
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4
     };
     static uint64_t b64 = 0, cnt = 0;
-    int32_t d = prng_get_u8(rng);
+    int32_t d;
     while(1) {
-        if(__glibc_likely(d < 254))
-            return sample_val[d];
-        d &= 1;
+        uint8_t b8 = prng_get_u8(rng);
+        if(__glibc_likely(b8 < 254))
+            return sample_val[b8];
+        b8 = ~b8;
+        d = b8;
         #if defined __GNUC__
         #pragma GCC unroll 2
         #elif defined __clang__
@@ -77,10 +79,10 @@ static int sampler_base_3(prng *__restrict rng){
 }
 
 inline double my_exp(double x) {
-    int cnt = 0;
+    uint32_t cnt = 1;
     while(x < -0.8) {
         x *= 0.5;
-        ++cnt;
+        cnt <<= 1;
     }
     double p = 1 + x + 0.5 * x * x + 
             0.16666666666666666 * x * x * x + 
@@ -91,13 +93,14 @@ inline double my_exp(double x) {
             // 2.48015873015873e-05 * x * x * x * x * x * x * x * x; // + 
             // 2.7557319223985893e-06 * x * x * x * x * x * x * x * x * x; // + 
             // 2.755731922398589e-07 * x * x * x * x * x * x * x * x * x * x;
-    while(cnt--)
+    while(cnt > 1) {
         p *= p;
+        cnt >>= 1;
+    }
     return p;
 }
 
-inline static int accept_sample(double x, prng *__restrict rng) {
-    double p = my_exp(x);
+inline static int accept_sample(double p, prng *__restrict rng) {
     uint64_t i = 1;
     uint8_t u, v;
     do {
@@ -118,7 +121,7 @@ int sampler_3(void *ctx, double center){
         int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
         double x = subtracted_numbers[z0]
                     - (double)((z - center) * (z - center)) / (2 * 1.5 * 1.5);
-        if((x == 0) || accept_sample(x, rng))
+        if((x == 0) || accept_sample(my_exp(x), rng))
             return z;
     }
 

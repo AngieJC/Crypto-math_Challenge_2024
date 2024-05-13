@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-08 09:16:03
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-12 20:50:31
+ * @LastEditTime: 2024-05-13 23:28:55
  * @FilePath: /Crypto-math_Challenge_2024/sampler_1.c
  */
 #include "my_sampler.h"
@@ -86,12 +86,14 @@ int sampler_1(void *ctx){
         1 , 1 , -1, -1, 2 , 2 , -2, -2, 1 , -1, 2 , -2, 1 , 2
     };
     static uint64_t b64 = 0, cnt = 0;
-    int32_t d = prng_get_u8(rng);
-    if(__glibc_likely(d < 252))
-        return sample_val[d];
-    if(d < 254)
-        return check_cnt(&cnt, &b64, rng) ? sample_val[d] : -sample_val[d];
-    d &= 1;
+    int32_t d;
+    uint8_t b8 = prng_get_u8(rng);
+    if(__glibc_likely(b8 < 252))
+        return sample_val[b8];
+    if(b8 < 254)
+        return check_cnt(&cnt, &b64, rng) ? sample_val[b8] : -sample_val[b8];
+    b8 = ~b8;
+    d = b8;
     #if defined __GNUC__
     #pragma GCC unroll 16
     #elif defined __clang__

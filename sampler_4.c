@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-13 11:28:09
+ * @LastEditTime: 2024-05-13 22:43:54
  * @FilePath: /Crypto-math_Challenge_2024/sampler_4.c
  */
 #include "my_sampler.h"
@@ -57,12 +57,13 @@ static int sampler_base_4_1_6(prng *__restrict rng){
         3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4
     };
     static uint64_t b64 = 0, cnt = 0;
-    int32_t d = prng_get_u8(rng);
+    int32_t d;
     while(1) {
-        if(__glibc_likely(d < 253))
-            return sample_val_1_6[d];
-        d &= 0b11;
-        d -= 1;
+        uint8_t b8 = prng_get_u8(rng);
+        if(__glibc_likely(b8 < 253))
+            return sample_val_1_6[b8];
+        b8 = ~b8;
+        d = b8;
         #if defined __GNUC__
         #pragma GCC unroll 2
         #elif defined __clang__
@@ -127,12 +128,13 @@ static int sampler_base_4_1_2(prng *__restrict rng){
         2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3
     };
     static uint64_t b64 = 0, cnt = 0;
-    int32_t d = prng_get_u8(rng);
+    int32_t d;
     while(1) {
-        if(__glibc_likely(d < 253))
-            return sample_val_1_2[d];
-        d &= 0b11;
-        d -= 1;
+        uint8_t b8 = prng_get_u8(rng);
+        if(__glibc_likely(b8 < 253))
+            return sample_val_1_2[b8];
+        b8 = ~b8;
+        d = b8;
         #if defined __GNUC__
         #pragma GCC unroll 2
         #elif defined __clang__
@@ -197,11 +199,13 @@ static int sampler_base_4_1_0(prng *__restrict rng){
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3
     };
     static uint64_t b64 = 0, cnt = 0;
-    int32_t d = prng_get_u8(rng);
+    int32_t d;
     while(1) {
-        if(__glibc_likely(d < 254))
-            return sample_val_1_0[d];
-        d &= 1;
+        uint8_t b8 = prng_get_u8(rng);
+        if(__glibc_likely(b8 < 254))
+            return sample_val_1_0[b8];
+        b8 = ~b8;
+        d = b8;
         #if defined __GNUC__
         #pragma GCC unroll 2
         #elif defined __clang__
@@ -216,8 +220,7 @@ static int sampler_base_4_1_0(prng *__restrict rng){
     return 0;
 }
 
-inline static int accept_sample(double x, double sigma_rate, prng *__restrict rng) {
-    double p = sigma_rate * my_exp(x);
+inline static int accept_sample(double p, prng *__restrict rng) {
     uint64_t i = 1;
     uint8_t u, v;
     do {
@@ -241,7 +244,7 @@ int sampler_4(void *ctx, double sigma, double center){
             int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_0[z0]
                         - (double)((z - center) * (z - center)) / (2 * sigma * sigma);
-            if(accept_sample(x, 0.8 / sigma, rng))
+            if(accept_sample(my_exp(x) * 0.8 / sigma, rng))
                 return z;
         }
         else if(sigma <= 1.2) {
@@ -249,7 +252,7 @@ int sampler_4(void *ctx, double sigma, double center){
             int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_2[z0]
                         - (double)((z - center) * (z - center)) / (2 * sigma * sigma);
-            if(accept_sample(x, 1.0 / sigma, rng))
+            if(accept_sample(my_exp(x) / sigma, rng))
                 return z;
         }
         else {
@@ -257,7 +260,7 @@ int sampler_4(void *ctx, double sigma, double center){
             int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_6[z0]
                         - (double)((z - center) * (z - center)) / (2 * sigma * sigma);
-            if(accept_sample(x, 1.2 / sigma, rng))
+            if(accept_sample(my_exp(x) * 1.2 / sigma, rng))
                 return z;
         }
     }
