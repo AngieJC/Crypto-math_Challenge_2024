@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-10 22:59:19
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-12 23:16:58
+ * @LastEditTime: 2024-05-13 17:07:03
  * @FilePath: /Crypto-math_Challenge_2024/todo.md
 -->
 # To-Do List
@@ -14,3 +14,4 @@
 - [x] 遍历目标列那里-(d + 1)可以改成-d，只需稍微修改一下矩阵：修改后多了两条指令，负优化
 - [x] 研究为什么第四题改成标准差为1.6的离散半高斯分布后不能通过检测：8比特一次采样失败剩下的数对于每种分布都是不一样的，特别需要注意253种的情况，留下2比特，而不是1比特
 - [x] 测试第四题分成两段会不会更好一些：将(0.8, 1.6)分成了两段，速度提升39%
+- [ ] 研究Karney采样算法会不会更快
