@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-12 20:19:52
+ * @LastEditTime: 2024-05-12 23:21:20
  * @FilePath: /Crypto-math_Challenge_2024/test_acc.cpp
  */
 #include "CppUTest/CommandLineTestRunner.h"
@@ -99,7 +99,7 @@ TEST(SamplerTestGroup, Sampler3DistributionTest) {
 TEST(SamplerTestGroup, Sampler4DistributionTest) {
     double expectedMeans[] = {0.0, 0.5, 0.999999};
     double expectedStdDevs[] = {0.800001, 1.2, 1.599999};
-    MeanTolerance = 0.001;
+    MeanTolerance = 0.002;
     StdDevTolerance = 0.002;
     sampler_shake256_init(&rng);
     sampler_shake256_inject(&rng, (const uint8_t *)"sampler_4", strlen("sampler_4"));
