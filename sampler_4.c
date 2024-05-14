@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-14 10:59:31
+ * @LastEditTime: 2024-05-14 20:29:46
  * @FilePath: /Crypto-math_Challenge_2024/sampler_4.c
  */
 #include "my_sampler.h"
@@ -224,7 +224,7 @@ inline static int accept_sample(double p, prng *__restrict rng) {
         i <<= 8;
         u = prng_get_u8(rng);
         v = (uint64_t)(p * i) & 0xff;
-    } while (u == v);
+    } while (__glibc_unlikely(u == v));
     return u < v;
 }
 

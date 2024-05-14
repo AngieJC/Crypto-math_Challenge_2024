@@ -26,7 +26,7 @@
  *
  * */
 
-inline uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prng *__restrict rng) {
+uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prng *__restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
     else {
