@@ -218,7 +218,7 @@ sampler(void *ctx, fpr mu, fpr isigma)
 
 
 // get 1 random bit
-static inline uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prng *__restrict rng) {
+static uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prng *__restrict rng) {
     if(*cnt)
         (*cnt) >>= 1;
     else {
@@ -231,7 +231,7 @@ static inline uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b
 }
 
 // get exp(x) with x in [-0.8, 0]
-static inline double my_exp(double x) {
+static double my_exp(double x) {
     uint32_t cnt = 1;
     while(x < -0.8) {
         x *= 0.5;
@@ -254,7 +254,7 @@ static inline double my_exp(double x) {
 }
 
 // return 1 probability p
-static inline uint8_t accept_sample(double p, prng *__restrict rng) {
+static uint8_t accept_sample(double p, prng *__restrict rng) {
     uint64_t i = 1;
     uint8_t u, v;
     do {
