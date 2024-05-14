@@ -17,7 +17,6 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 -march=native -mno-avx
-LDTEST = -lCppUTest
 
 PGFLAG = #-pg -no-pie
 CFLAGS += $(PGFLAG)
@@ -28,7 +27,7 @@ LIBS = #-lm
 
 .PHONY: all clean test debug
 
-OBJ = sampler_1.o sampler_2.o sampler_3.o sampler_4.o sampler.o fpr.o rng.o shake.o util.o
+OBJ = sampler.o fpr.o rng.o shake.o util.o
 
 EXE = test_time sampler2file benchmark
 
@@ -53,4 +52,4 @@ clean:
 	-rm -f *.o $(EXE) libdgs.a
 
 debug:
-	$(CC) fpr.c rng.c sampler_1.c sampler_2.c sampler_3.c sampler_4.c sampler.c shake.c util.c test_time.c -o test_time -g
+	$(CC) fpr.c rng.c sampler.c shake.c util.c test_time.c -o test_time -g

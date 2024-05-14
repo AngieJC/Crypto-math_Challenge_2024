@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "sampler.h"
-#include "my_sampler.h"
 #include "time.h"
 #include "util.h"
 
