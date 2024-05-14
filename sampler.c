@@ -230,8 +230,8 @@ static uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prn
     return b;
 }
 
-// get exp(x) with x in [-0.8, 0]
-static double my_exp(double x) {
+// return exp(x) with x < 0
+static inline double my_exp(double x) {
     uint32_t cnt = 1;
     while(x < -0.8) {
         x *= 0.5;
@@ -240,8 +240,8 @@ static double my_exp(double x) {
     double p = 1 + x + 0.5 * x * x + 
             0.16666666666666666 * x * x * x + 
             0.041666666666666664 * x * x * x * x + 
-            0.008333333333333333 * x * x * x * x * x + 
-            0.001388888888888889 * x * x * x * x * x * x; // + 
+            0.008333333333333333 * x * x * x * x * x; // + 
+            // 0.001388888888888889 * x * x * x * x * x * x; // + 
             // 0.0001984126984126984 * x * x * x * x * x * x * x; // + 
             // 2.48015873015873e-05 * x * x * x * x * x * x * x * x; // + 
             // 2.7557319223985893e-06 * x * x * x * x * x * x * x * x * x; // + 
@@ -254,14 +254,14 @@ static double my_exp(double x) {
 }
 
 // return 1 probability p
-static uint8_t accept_sample(double p, prng *__restrict rng) {
+static inline uint8_t accept_sample(double p, prng *__restrict rng) {
     uint64_t i = 1;
     uint8_t u, v;
     do {
         i <<= 8;
         u = prng_get_u8(rng);
         v = (uint64_t)(p * i) & 0xff;
-    } while (u == v);
+    } while (__glibc_unlikely(u == v));
     return u < v;
 }
 
