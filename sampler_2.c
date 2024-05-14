@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-13 19:38:21
+ * @LastEditTime: 2024-05-14 11:17:22
  * @FilePath: /Crypto-math_Challenge_2024/sampler_2.c
  */
 #include "my_sampler.h"
@@ -30,8 +30,8 @@ int sampler_2(void *ctx){
     static const uint16_t m2_col_sum[] = {990, 931, 1035, 1137, 1455, 1487, 1640, 1733, 1835, 1921, 2033, 2114, 2194, 2304, 2405, 2434, 2529};
 
     prng *__restrict rng = &((sampler_context *)ctx)->p;
-    int32_t d = (prng_get_u8(rng) << 2) ^ (prng_get_u8(rng) & 0b11);
     static uint64_t b64 = 0, cnt = 0;
+    int32_t d = (prng_get_u8(rng) << 2) ^ prng_get_u8(rng);
 
     #if defined __GNUC__
     #pragma GCC unroll 17

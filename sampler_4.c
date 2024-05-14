@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-13 22:43:54
+ * @LastEditTime: 2024-05-14 10:59:31
  * @FilePath: /Crypto-math_Challenge_2024/sampler_4.c
  */
 #include "my_sampler.h"
@@ -75,7 +75,6 @@ static int sampler_base_4_1_6(prng *__restrict rng){
                 return m4_index_1_6[col][-(d + 1)];
         }
     }
-    return 0;
 }
 
 static int sampler_base_4_1_2(prng *__restrict rng){
@@ -146,7 +145,6 @@ static int sampler_base_4_1_2(prng *__restrict rng){
                 return m4_index_1_2[col][-(d + 1)];
         }
     }
-    return 0;
 }
 
 static int sampler_base_4_1_0(prng *__restrict rng){
@@ -217,7 +215,6 @@ static int sampler_base_4_1_0(prng *__restrict rng){
                 return m4_index_1_0[col][-(d + 1)];
         }
     }
-    return 0;
 }
 
 inline static int accept_sample(double p, prng *__restrict rng) {

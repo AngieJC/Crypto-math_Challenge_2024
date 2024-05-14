@@ -17,8 +17,6 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 -march=native -mno-avx
-CPP = g++
-CPPFLAGS = $(CFLAGS)
 LDTEST = -lCppUTest
 
 PGFLAG = #-pg -no-pie
@@ -32,21 +30,15 @@ LIBS = #-lm
 
 OBJ = sampler_1.o sampler_2.o sampler_3.o sampler_4.o sampler.o fpr.o rng.o shake.o util.o
 
-EXE = test_time sampler2file test_acc benchmark
+EXE = test_time sampler2file benchmark
 
 all: $(EXE)
-
-test: test_acc
-	clear && ./test_acc
 
 test_time: test_time.o $(OBJ)
 	$(CC) $(LDFLAGS) -o test_time test_time.o $(OBJ) $(LIBS)
 
 sampler2file: sampler2file.o $(OBJ)
 	$(CC) $(LDFLAGS) -o sampler2file sampler2file.o $(OBJ) $(LIBS)
-
-test_acc: test_acc.o $(OBJ)
-	$(CPP) $(LDFLAGS) -o test_acc test_acc.o $(OBJ) $(LDTEST) $(LIBS)
 
 benchmark: libdgs.a benchmark.o
 	$(CC) $(LDFLAGS) -o benchmark benchmark.o libdgs.a -lgmp -lmpfr -lm ./libdgs.a

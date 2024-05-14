@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-05-06 22:34:47
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-13 22:49:19
+ * @LastEditTime: 2024-05-14 10:57:48
  * @FilePath: /Crypto-math_Challenge_2024/sampler_3.c
  */
 #include "my_sampler.h"
@@ -75,7 +75,6 @@ static int sampler_base_3(prng *__restrict rng){
                 return m3_index[col][-(d + 1)];
         }
     }
-    return 0;
 }
 
 inline double my_exp(double x) {
