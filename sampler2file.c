@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-04-30 15:26:56
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-14 14:34:14
+ * @LastEditTime: 2024-05-15 14:18:58
  * @FilePath: /Crypto-math_Challenge_2024/sampler2file.c
  */
 #include <stdio.h>
@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
     sampler_shake256_context rng;
     sampler_context sc;
-    char seeds[4][16] = {"sampler_1", "sampler_2", "sampler_3", "sampler_4"};
+    const char *seeds[4] = {"sampler_1", "sampler_2", "sampler_3", "sampler_4"};
     char file_name[1024] = {0};
     char first_line[1024] = {0};
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     double duration;
     start = clock();
     sampler_shake256_init(&rng);
-    sampler_shake256_inject(&rng, (const uint8_t *)seeds[sampler], strlen(seeds[sampler]));
+    sampler_shake256_inject(&rng, (const void *)(seeds[sampler - 1]), strlen(seeds[sampler - 1]));
     sampler_shake256_flip(&rng);
     Zf(prng_init)(&sc.p, &rng);
 

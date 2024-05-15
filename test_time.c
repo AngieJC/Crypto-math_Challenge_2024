@@ -2,7 +2,7 @@
  * @Author: AngieJC htk90uggk@outlook.com
  * @Date: 2024-04-13 11:22:48
  * @LastEditors: AngieJC htk90uggk@outlook.com
- * @LastEditTime: 2024-05-14 11:10:37
+ * @LastEditTime: 2024-05-15 14:14:15
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     start = clock();
     __asm__ __volatile__("rdtsc" : "=a" (tsc_start_lo), "=d" (tsc_start_hi));
     sampler_shake256_init(&rng);
-    sampler_shake256_inject(&rng, (const uint8_t *)seeds[sampler], strlen(seeds[sampler]));
+    sampler_shake256_inject(&rng, (const void *)seeds[sampler - 1], strlen(seeds[sampler - 1]));
     sampler_shake256_flip(&rng);
     Zf(prng_init)(&sc.p, &rng);
 
