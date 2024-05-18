@@ -671,7 +671,7 @@ int sampler_4(void *ctx, double sigma, double center) {
             int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_0[z0]
                         - (z - center) * (z - center) / (2 * sigma * sigma);
-            if(accept_sample(my_exp(x), rng))
+            if((x == 0) || accept_sample(my_exp(x), rng))
                 return z;
         }
         else if(sigma <= 1.2) {
@@ -679,7 +679,7 @@ int sampler_4(void *ctx, double sigma, double center) {
             int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_2[z0]
                         - (z - center) * (z - center) / (2 * sigma * sigma);
-            if(accept_sample(my_exp(x), rng))
+            if((x == 0) || accept_sample(my_exp(x), rng))
                 return z;
         }
         else {
@@ -687,7 +687,7 @@ int sampler_4(void *ctx, double sigma, double center) {
             int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_6[z0]
                         - (z - center) * (z - center) / (2 * sigma * sigma);
-            if(accept_sample(my_exp(x), rng))
+            if((x == 0) || accept_sample(my_exp(x), rng))
                 return z;
         }
     }
