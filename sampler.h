@@ -281,5 +281,7 @@ int sampler_3(void *ctx, double center);
 
 int sampler_4(void *ctx, double sigma, double center);
 
+int sampler_2_karney(void *ctx);
+
 
 #endif
