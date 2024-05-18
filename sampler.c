@@ -233,13 +233,13 @@ static uint8_t check_cnt(uint64_t *__restrict cnt, uint64_t *__restrict b64, prn
 // return exp(x) with x < 0
 static double my_exp(double x) {
     uint32_t cnt = 1;
-    while(x < -0.8) {
+    while(x < -0.6931471805599453) {
         x *= 0.5;
         cnt <<= 1;
     }
-    double p = 0.008333333333333333;
-    p = 0.041666666666666664 + p * x;
-    p = 0.16666666666666666 + p * x;
+    double p = 0.008333325351663756;
+    p = 0.041666667747152886 + p * x;
+    p = 0.16666666658538531 + p * x;
     p = 0.5 + p * x;
     p = 1 + p * x;
     p = 1 + p * x;
@@ -437,7 +437,7 @@ int sampler_3(void *ctx, double center) {
         uint8_t z0 = sampler_base_3(rng);
         int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
         double x = subtracted_numbers[z0]
-                    - (z - center) * (z - center) * 0.2222222222222222;
+                    - (z - center) * (z - center) / (2 * 1.5 * 1.5);
         if((x == 0) || accept_sample(my_exp(x), rng))
             return z;
     }
