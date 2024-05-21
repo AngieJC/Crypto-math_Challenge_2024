@@ -16,7 +16,7 @@
 #               (normally not needed on x86, both 32-bit and 64-bit)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 -march=native -mno-avx
+CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 -march=native
 
 PGFLAG = #-pg -no-pie
 CFLAGS += $(PGFLAG)
@@ -29,7 +29,7 @@ LIBS = #-lm
 
 OBJ = sampler.o fpr.o rng.o shake.o util.o
 
-EXE = test_time sampler2file benchmark
+EXE = test_time sampler2file
 
 all: $(EXE)
 
@@ -39,14 +39,8 @@ test_time: test_time.o $(OBJ)
 sampler2file: sampler2file.o $(OBJ)
 	$(CC) $(LDFLAGS) -o sampler2file sampler2file.o $(OBJ) $(LIBS)
 
-benchmark: libdgs.a benchmark.o
-	$(CC) $(LDFLAGS) -o benchmark benchmark.o libdgs.a -lgmp -lmpfr -lm ./libdgs.a
-
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
-
-libdgs.a: dgs/dgs_bern.o dgs/dgs_gauss_dp.o dgs/dgs_gauss_mp.o dgs/dgs_rround_dp.o dgs/dgs_rround_mp.o
-	ar rcs $@ $^
 
 clean:
 	-rm -f *.o $(EXE) libdgs.a

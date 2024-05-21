@@ -10,7 +10,7 @@
 # activate the virtual environment
 echo "MUST ACTIVATE THE VIRTUAL ENVIRONMENT FIRST!"
 
-times=100000000
+times=100000
 
 # sampler_1
 filename="sampler_1_$times.txt"

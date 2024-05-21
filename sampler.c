@@ -250,7 +250,7 @@ static double my_exp(double x) {
     return p;
 }
 
-// return 1 probability p
+// return 1 with probability p
 static uint8_t accept_sample(double p, prng *__restrict rng) {
     uint64_t i = 1;
     uint8_t u, v;
