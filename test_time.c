@@ -59,13 +59,13 @@ int main(int argc, char **argv) {
     end = clock();
     duration = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time: %fs\n", duration);
-    printf("%.0f samples per seccond\n", samples / duration);
-    printf("%zu clocks per sample\n", 
-        (
-            ((int64_t)tsc_end_lo | ((int64_t)tsc_end_hi) << 32) - 
-            ((int64_t)tsc_start_lo | ((int64_t)tsc_start_hi) << 32)
-        ) / samples);
-    printf("Memory usage: %dKB\n", get_rmem(getpid()));
+    printf("%.2f * 10^6 samples per seccond\n", samples / (duration * 1e6));
+    // printf("%zu clocks per sample\n", 
+    //     (
+    //         ((int64_t)tsc_end_lo | ((int64_t)tsc_end_hi) << 32) - 
+    //         ((int64_t)tsc_start_lo | ((int64_t)tsc_start_hi) << 32)
+    //     ) / samples);
+    // printf("Memory usage: %dKB\n", get_rmem(getpid()));
 
     return 0;
 }
