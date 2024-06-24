@@ -33,6 +33,7 @@ vgcore.*
 # doc
 doc/*
 !doc/Sampler.tex
+!doc/Isochronous_Gaussian_Sampling_From_Inception_to_Implementation_With_Applications_to_the_Falcon_Signature_Scheme.pdf
 !doc/Constant-Time_Discrete_Gaussian_Sampling.pdf
 !doc/Gaussian_Sampling_over_the_Integers_Efficient_Generic_Constant-Time.pdf
 !doc/Pushing_the_speed_limit_of_constant-time_discrete_Gaussian_sampling_-_A_case_study_on_the_Falcon_signature_scheme.pdf
