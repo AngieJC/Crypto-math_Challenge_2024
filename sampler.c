@@ -252,12 +252,16 @@ static double my_exp(double x) {
 
 // return 1 with probability p
 static uint8_t accept_sample(double p, prng *__restrict rng) {
-    uint64_t i = 1;
+    union {
+        double d;
+        uint64_t u;
+    } val;
+    val.d = p;
     uint8_t u, v;
     do {
-        i <<= 8;
         u = prng_get_u8(rng);
-        v = (uint64_t)(p * i) & 0xff;
+        val.u += ((uint64_t)8 << 52);
+        v = (uint64_t)(val.d) & 0xff;
     } while (__glibc_unlikely(u == v));
     return u < v;
 }
