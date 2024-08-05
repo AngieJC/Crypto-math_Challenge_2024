@@ -345,7 +345,7 @@ int sampler_2(void *ctx) {
 
     prng *__restrict rng = &((sampler_context *)ctx)->p;
     static uint64_t b64 = 0, cnt = 0;
-    int32_t d = (prng_get_u8(rng) << 2) ^ prng_get_u8(rng);
+    int32_t d = (prng_get_u8(rng) << 3) ^ prng_get_u8(rng);
 
     #if defined __GNUC__
     #pragma GCC unroll 17
@@ -353,11 +353,12 @@ int sampler_2(void *ctx) {
     #pragma clang loop unroll(full)
     #endif
     for(int col = 0; col < 17; ++col) {
-        d = (d << 1) + check_cnt(&cnt, &b64, rng) - m2_col_sum[col];
+        d -= m2_col_sum[col];
         if(d < 0) {
             d = m2_index[col][-(d + 1)];
             return check_cnt(&cnt, &b64, rng) ? d : -d;
         }
+        d = (d << 1) + check_cnt(&cnt, &b64, rng);
     }
     return 0;
 }
