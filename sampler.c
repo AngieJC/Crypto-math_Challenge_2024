@@ -262,7 +262,7 @@ static uint8_t accept_sample(double p, prng *__restrict rng) {
         u = prng_get_u8(rng);
         val.u += ((uint64_t)8 << 52);
         v = (uint64_t)(val.d) & 0xff;
-    } while (__glibc_unlikely(u == v));
+    } while(__glibc_unlikely(u == v));
     return u < v;
 }
 
@@ -348,17 +348,22 @@ int sampler_2(void *ctx) {
     int32_t d = (prng_get_u8(rng) << 3) ^ prng_get_u8(rng);
 
     #if defined __GNUC__
-    #pragma GCC unroll 17
+    #pragma GCC unroll 16
     #elif defined __clang__
     #pragma clang loop unroll(full)
     #endif
-    for(int col = 0; col < 17; ++col) {
+    for(int col = 0; col < 16; ++col) {
         d -= m2_col_sum[col];
         if(d < 0) {
             d = m2_index[col][-(d + 1)];
             return check_cnt(&cnt, &b64, rng) ? d : -d;
         }
         d = (d << 1) + check_cnt(&cnt, &b64, rng);
+    }
+    d -= m2_col_sum[16];
+    if(d < 0) {
+        d = m2_index[16][-(d + 1)];
+        return check_cnt(&cnt, &b64, rng) ? d : -d;
     }
     return 0;
 }
@@ -446,8 +451,6 @@ int sampler_3(void *ctx, double center) {
         if((x == 0) || accept_sample(my_exp(x), rng))
             return z;
     }
-
-    return 0;
 }
 
 // base sampler for sampler_4 with sigma in (1.2, 1.6)
@@ -670,32 +673,35 @@ int sampler_4(void *ctx, double sigma, double center) {
     static double subtracted_numbers_1_2[] = {0.0, 0.3472222222222222, 1.3888888888888888, 3.125, 5.555555555555555, 8.680555555555555, 12.5, 17.01388888888889, 22.22222222222222, 28.125};
     static double subtracted_numbers_1_0[] = {0.0, 0.5, 2.0, 4.5, 8.0, 12.5, 18.0, 24.5, 32.0, 40.5};
 
-    while(1) {
-        if(sigma <= 1.0) {
+    double sigma_times_sigma_times_2 = 2 * sigma * sigma;
+    if(sigma <= 1.0) {
+        while (1) {
             uint8_t z0 = sampler_base_4_1_0(rng);
             int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
-            double x = subtracted_numbers_1_0[z0]
-                        - (z - center) * (z - center) / (2 * sigma * sigma);
-            if((x == 0) || accept_sample(my_exp(x), rng))
-                return z;
-        }
-        else if(sigma <= 1.2) {
-            uint8_t z0 = sampler_base_4_1_2(rng);
-            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
-            double x = subtracted_numbers_1_2[z0]
-                        - (z - center) * (z - center) / (2 * sigma * sigma);
-            if((x == 0) || accept_sample(my_exp(x), rng))
-                return z;
-        }
-        else {
-            uint8_t z0 = sampler_base_4_1_6(rng);
-            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
-            double x = subtracted_numbers_1_6[z0]
-                        - (z - center) * (z - center) / (2 * sigma * sigma);
+            double x = subtracted_numbers_1_0[z0] - 
+                        (z - center) * (z - center) / sigma_times_sigma_times_2;
             if((x == 0) || accept_sample(my_exp(x), rng))
                 return z;
         }
     }
-
-    return 0;
+    else if(sigma <= 1.2) {
+        while (1) {
+            uint8_t z0 = sampler_base_4_1_2(rng);
+            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+            double x = subtracted_numbers_1_2[z0] - 
+                        (z - center) * (z - center) / sigma_times_sigma_times_2;
+            if((x == 0) || accept_sample(my_exp(x), rng))
+                return z;
+        }
+    }
+    else {
+        while (1) {
+            uint8_t z0 = sampler_base_4_1_6(rng);
+            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+            double x = subtracted_numbers_1_6[z0] - 
+                        (z - center) * (z - center) / sigma_times_sigma_times_2;
+            if((x == 0) || accept_sample(my_exp(x), rng))
+                return z;
+        }
+    }
 }
