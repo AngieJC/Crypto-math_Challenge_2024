@@ -345,14 +345,31 @@ int sampler_2(void *ctx) {
 
     prng *__restrict rng = &((sampler_context *)ctx)->p;
     static uint64_t b64 = 0, cnt = 0;
-    int32_t d = (prng_get_u8(rng) << 3) ^ prng_get_u8(rng);
+    uint8_t d_ = prng_get_u8(rng);
+    int32_t d = (prng_get_u8(rng) << 3) ^ d_;
+    d_ >>= 3;
 
+    int col = 0;
     #if defined __GNUC__
-    #pragma GCC unroll 16
+    #pragma GCC unroll 5
     #elif defined __clang__
     #pragma clang loop unroll(full)
     #endif
-    for(int col = 0; col < 16; ++col) {
+    for(; col < 5; ++col) {
+        d -= m2_col_sum[col];
+        if(d < 0) {
+            d = m2_index[col][-(d + 1)];
+            return (d_ & 1) ? d : -d;
+        }
+        d = (d << 1) + (d_ & 1);
+        d_ >>= 1;
+    }
+    #if defined __GNUC__
+    #pragma GCC unroll 11
+    #elif defined __clang__
+    #pragma clang loop unroll(full)
+    #endif
+    for(; col < 16; ++col) {
         d -= m2_col_sum[col];
         if(d < 0) {
             d = m2_index[col][-(d + 1)];
