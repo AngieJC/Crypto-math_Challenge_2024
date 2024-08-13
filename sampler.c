@@ -459,10 +459,11 @@ static int sampler_base_3(prng *__restrict rng) {
 int sampler_3(void *ctx, double center) {
     prng *restrict rng = &((sampler_context *)ctx)->p;
     static double subtracted_numbers[] = {0.0, 0.2222222222222222, 0.8888888888888888, 2.0, 3.5555555555555554, 5.555555555555555, 8.0, 10.88888888888889, 14.222222222222221, 18.0};
+    static uint64_t b64 = 0, cnt = 0;
 
     while(1) {
         uint8_t z0 = sampler_base_3(rng);
-        int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+        int8_t z = check_cnt(&cnt, &b64, rng) ? z0 + 1 : -z0;
         double x = subtracted_numbers[z0]
                     - (z - center) * (z - center) / (2 * 1.5 * 1.5);
         if((x == 0) || accept_sample(my_exp(x), rng))
@@ -689,12 +690,13 @@ int sampler_4(void *ctx, double sigma, double center) {
     static double subtracted_numbers_1_6[] = {0.0, 0.19531249999999997, 0.7812499999999999, 1.7578124999999996, 3.1249999999999996, 4.882812499999999, 7.031249999999998, 9.570312499999998, 12.499999999999998, 15.820312499999996};
     static double subtracted_numbers_1_2[] = {0.0, 0.3472222222222222, 1.3888888888888888, 3.125, 5.555555555555555, 8.680555555555555, 12.5, 17.01388888888889, 22.22222222222222, 28.125};
     static double subtracted_numbers_1_0[] = {0.0, 0.5, 2.0, 4.5, 8.0, 12.5, 18.0, 24.5, 32.0, 40.5};
-
     double sigma_times_sigma_times_2 = 2 * sigma * sigma;
+    static uint64_t b64 = 0, cnt = 0;
+
     if(sigma <= 1.0) {
         while (1) {
             uint8_t z0 = sampler_base_4_1_0(rng);
-            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+            int8_t z = check_cnt(&cnt, &b64, rng) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_0[z0] - 
                         (z - center) * (z - center) / sigma_times_sigma_times_2;
             if((x == 0) || accept_sample(my_exp(x), rng))
@@ -704,7 +706,7 @@ int sampler_4(void *ctx, double sigma, double center) {
     else if(sigma <= 1.2) {
         while (1) {
             uint8_t z0 = sampler_base_4_1_2(rng);
-            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+            int8_t z = check_cnt(&cnt, &b64, rng) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_2[z0] - 
                         (z - center) * (z - center) / sigma_times_sigma_times_2;
             if((x == 0) || accept_sample(my_exp(x), rng))
@@ -714,7 +716,7 @@ int sampler_4(void *ctx, double sigma, double center) {
     else {
         while (1) {
             uint8_t z0 = sampler_base_4_1_6(rng);
-            int8_t z = (prng_get_u8(rng) & 1) ? z0 + 1 : -z0;
+            int8_t z = check_cnt(&cnt, &b64, rng) ? z0 + 1 : -z0;
             double x = subtracted_numbers_1_6[z0] - 
                         (z - center) * (z - center) / sigma_times_sigma_times_2;
             if((x == 0) || accept_sample(my_exp(x), rng))
